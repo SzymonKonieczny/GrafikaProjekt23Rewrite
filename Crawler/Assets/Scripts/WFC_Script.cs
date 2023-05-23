@@ -169,7 +169,7 @@ public class WFC_Script : MonoBehaviour
 
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
-            if (Cell.Value.Count == 1) continue;
+            if (Cell.Value.Count <= 1) continue;
             Entropy = Cell.Value.Count;
             if (Entropy < CurrMin) {
                 CurrMin = Entropy;
@@ -186,6 +186,13 @@ public class WFC_Script : MonoBehaviour
         Vector2Int MinEntropyIdx = GetMinEntropyIdx();
         List<Tile> MinEntropyCell = WFCMap[GetMinEntropyIdx()];
         SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
+
+        Debug.Log(string.Format("Spawning tile at {0}", MinEntropyIdx.ToString()));
+        SelectedTile.Position = MinEntropyIdx;
+        FinalWFCMap.Add(MinEntropyIdx, SelectedTile);
+        PlaceRoom(SelectedTile);
+        Debug.Log("Spawned Tile");
+
         WFCMap[MinEntropyIdx] = new List<Tile>();
         WFCMap[MinEntropyIdx].Add(SelectedTile);
     }
@@ -293,13 +300,14 @@ public class WFC_Script : MonoBehaviour
         return Changed;
     }
 
-    public void GenerateWFCMap()
+    public IEnumerator GenerateWFCMap()
     {
         InitMap(MapSize.x, MapSize.y);
 
         uint x = 0;
         do {
             while(Spread()) {}
+            yield return new WaitForSeconds(0.25f);
             Iteration();
             x += 1;
         } while(Continue());
@@ -323,10 +331,9 @@ public class WFC_Script : MonoBehaviour
         //if(tile.Type!=TileType.Empty)
         //go.transform.Rotate(new Vector3(1, 0, 0), 90);
       
+        Debug.Log(string.Format("Tile pos: {0}", tile.Position));
         PlacedRooms.Add(tile.Position, go);
     }
-
-    // Start is called before the first frame update
 
     void SpawnMap()
     {
@@ -335,10 +342,16 @@ public class WFC_Script : MonoBehaviour
             PlaceRoom(Cell.Value);
         }
     }
+
+
+
     void Start()
     {
-        GenerateWFCMap();
-        SpawnMap();
+        PlacedRooms = new Dictionary<Vector2Int, GameObject>();
+        FinalWFCMap = new Dictionary<Vector2Int, Tile>();
+
+        StartCoroutine(GenerateWFCMap());
+        // SpawnMap();
     }
 
 
