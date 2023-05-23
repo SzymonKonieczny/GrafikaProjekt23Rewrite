@@ -35,3 +35,8 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# DODANE PRZEZ MAĆKA :P
+Crawler/Logs/AssetImportWorker0-prev.log
+Crawler/Logs/shadercompiler-UnityShaderCompiler0.log
+Crawler/UserSettings/Search.index
