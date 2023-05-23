@@ -29,7 +29,7 @@ namespace Crawler
     struct Tile 
     {
         public Vector2Int Position;
-        public TileType Tile;
+        public TileType Type;
         public Quaternion Rotation;
 
         public List<SocketType> Sockets;
@@ -42,6 +42,9 @@ namespace Crawler
 
         public Tile(TileType type, int Rotation)
         {
+            Type = type;
+            SetRotation(Rotation);
+
             switch(type)
             {
             case TileType.Empty:
@@ -126,7 +129,7 @@ public class WFC_Script : MonoBehaviour
         Console.WriteLine("[INFO] Check if all TileTypes have been inserted");
     }
 
-    private void InitMap(usize width, usize height)
+    private void InitMap(uint width, uint height)
     {
         InitTemplates();
         Dictionary<Vector2Int, List<Tile>> Map;
@@ -280,6 +283,7 @@ public class WFC_Script : MonoBehaviour
             Iteration();
         }
 
+        FinalWFCMap = new Dictionary<Vector2Int, Tile>();
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
             FinalWFCMap.Add(Cell.Value[0]);
@@ -289,7 +293,7 @@ public class WFC_Script : MonoBehaviour
     
     private void PlaceRoom(Tile tile)
     {
-        GameObject go = Instantiate(RoomPrefabs[(int)tile.Tile]);
+        GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
         go.transform.position = new Vector3(tile.Position.x, 0, tile.Position.y);
         PlacedRooms.Add(tile.Position, go);
    
