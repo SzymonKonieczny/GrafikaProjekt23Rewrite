@@ -134,7 +134,7 @@ public class WFC_Script : MonoBehaviour
             // TODO: Add the rest of the TileTypes
         }
         TileTemplates.Add(new Tile(TileType.Empty, 0));
-        Console.WriteLine("[INFO] Check if all TileTypes have been inserted");
+        Debug.LogWarning("Check if all TileTypes have been inserted");
     }
 
     private void InitMap(int width, int height)
@@ -163,10 +163,10 @@ public class WFC_Script : MonoBehaviour
         Vector2Int CurrIdx = new Vector2Int(0, 0);
         int CurrMin = TileTemplates.Count;
         int Entropy = 0;
-        int x = 0, y = 0;
 
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
+            if (Cell.Value.Count == 1) continue;
             Entropy = Cell.Value.Count;
             if (Entropy < CurrMin) {
                 CurrMin = Entropy;
@@ -185,7 +185,6 @@ public class WFC_Script : MonoBehaviour
         SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
         WFCMap[MinEntropyIdx] = new List<Tile>();
         WFCMap[MinEntropyIdx].Add(SelectedTile);
-          
     }
 
     private bool Spread()
@@ -294,18 +293,21 @@ public class WFC_Script : MonoBehaviour
     public void GenerateWFCMap()
     {
         InitMap(MapSize.x, MapSize.y);
-        while(Continue()) {
+
+        uint x = 0;
+        do {
             while(Spread()) {}
             Iteration();
-        }
+            x += 1;
+        } while(Continue());
+        Debug.Log(string.Format("Finished at iteration: {0}", x));
 
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
-            Tile Jakkowliek = Cell.Value[0];
-            Jakkowliek.Position = Cell.Key;
-            FinalWFCMap.Add(Cell.Key, Jakkowliek);
-
+            Tile MapTile = Cell.Value[0];
+            MapTile.Position = Cell.Key;
+            FinalWFCMap.Add(Cell.Key, MapTile);
         }
     }
 
@@ -315,7 +317,6 @@ public class WFC_Script : MonoBehaviour
         GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
         go.transform.position = new Vector3(tile.Position.x, 0, tile.Position.y);
         PlacedRooms.Add(tile.Position, go);
-   
     }
 
     // Start is called before the first frame update
