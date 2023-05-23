@@ -93,9 +93,9 @@ namespace Crawler
             // (the order was 0 3 2 1 on the right side in the UE5)
             // (idk why lol)
             Sockets[0] = DefaultSockets[(0+Rot)%4];
-            Sockets[1] = DefaultSockets[(1+Rot)%4];
+            Sockets[1] = DefaultSockets[(3+Rot)%4];
             Sockets[2] = DefaultSockets[(2+Rot)%4];
-            Sockets[3] = DefaultSockets[(3+Rot)%4];
+            Sockets[3] = DefaultSockets[(1+Rot)%4];
 
             for (int i = 0; i < 4; ++i)
             {
@@ -124,6 +124,9 @@ public class WFC_Script : MonoBehaviour
 
 
     [SerializeField] Vector2Int MapSize = new Vector2Int(10,10);
+    public float GridSize = 2;
+
+
     private void InitTemplates() {
         for(int i = 0; i < 4; ++i)
         {
@@ -315,7 +318,11 @@ public class WFC_Script : MonoBehaviour
     private void PlaceRoom(Tile tile)
     {
         GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
-        go.transform.position = new Vector3(tile.Position.x, 0, tile.Position.y);
+        go.transform.position = new Vector3(tile.Position.x*GridSize, 0, tile.Position.y*GridSize);
+        go.transform.rotation = tile.Rotation;
+        //if(tile.Type!=TileType.Empty)
+        //go.transform.Rotate(new Vector3(1, 0, 0), 90);
+      
         PlacedRooms.Add(tile.Position, go);
     }
 

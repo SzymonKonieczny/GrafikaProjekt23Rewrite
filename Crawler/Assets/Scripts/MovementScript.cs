@@ -31,7 +31,7 @@ public class MovementScript : MonoBehaviour
     private void Start()
     {
 
-
+        Debug.Log("Starting Movement Sciprt");
     }
     void Update()
     {
