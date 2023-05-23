@@ -22,8 +22,8 @@ namespace Crawler
     enum SocketType
     {
         Empty_S,
-        Hall_0,     // on X axis
-        Hall_1,     // on Z axis
+        Hall_0,     // on Z axis
+        Hall_1,     // on X axis
     }
 
     struct Tile 
@@ -36,7 +36,7 @@ namespace Crawler
 
         void SetRotation(int rotIdx)
         {
-            SetRotationVec3(new Vector3(0, rotIdx * 90, 0));
+            SetRotationVec3(new Vector3(0, -(rotIdx%4) * 90, 0));
         }
         void SetRotationVec3(Vector3 Rot)
         {
@@ -54,34 +54,34 @@ namespace Crawler
             switch(type)
             {
             case TileType.Empty:
-                Sockets.Add(SocketType.Empty_S); // Z+
                 Sockets.Add(SocketType.Empty_S); // X+
                 Sockets.Add(SocketType.Empty_S); // Z-
                 Sockets.Add(SocketType.Empty_S); // X-
+                Sockets.Add(SocketType.Empty_S); // Z+
                 break;
             case TileType.Hall_I:
-                Sockets.Add(SocketType.Hall_0);  // Z+
                 Sockets.Add(SocketType.Empty_S); // X+
                 Sockets.Add(SocketType.Hall_0);  // Z-
                 Sockets.Add(SocketType.Empty_S); // X-
+                Sockets.Add(SocketType.Hall_0);  // Z+
                 break;
             case TileType.Hall_L:
-                Sockets.Add(SocketType.Hall_0);  // Z+
                 Sockets.Add(SocketType.Empty_S); // X+
                 Sockets.Add(SocketType.Empty_S); // Z-
                 Sockets.Add(SocketType.Hall_1);  // X-
+                Sockets.Add(SocketType.Hall_0);  // Z+
                 break;
             case TileType.Hall_T:
-                Sockets.Add(SocketType.Hall_0);  // Z+
                 Sockets.Add(SocketType.Hall_1);  // X+
                 Sockets.Add(SocketType.Hall_0);  // Z-
                 Sockets.Add(SocketType.Empty_S); // X-
+                Sockets.Add(SocketType.Hall_0);  // Z+
                 break;
             case TileType.Hall_X:
-                Sockets.Add(SocketType.Hall_0);  // Z+
                 Sockets.Add(SocketType.Hall_1);  // X+
                 Sockets.Add(SocketType.Hall_0);  // Z-
                 Sockets.Add(SocketType.Hall_1);  // X-
+                Sockets.Add(SocketType.Hall_0);  // Z+
                 break;
             default:
                 throw new System.Exception(string.Format("{0} NOT IMPLEMENTED YET", type.ToString()));
@@ -89,13 +89,16 @@ namespace Crawler
 
             List<SocketType> DefaultSockets = new List<SocketType>(Sockets);
 
-            // TODO: check if indexing is right :)
-            // (the order was 0 3 2 1 on the right side in the UE5)
-            // (idk why lol)
-            Sockets[0] = DefaultSockets[(0+Rot)%4];
-            Sockets[1] = DefaultSockets[(1+Rot)%4];
-            Sockets[2] = DefaultSockets[(2+Rot)%4];
-            Sockets[3] = DefaultSockets[(3+Rot)%4];
+            if (Rot != 0)
+            {
+                Debug.LogWarning(string.Format("tile: {0} | rotation: {1}", type.ToString(), Rot));
+                Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
+            }
+            
+            Sockets[0] = DefaultSockets[(4-Rot)%4];
+            Sockets[3] = DefaultSockets[(7-Rot)%4];
+            Sockets[2] = DefaultSockets[(6-Rot)%4];
+            Sockets[1] = DefaultSockets[(5-Rot)%4];
 
             for (int i = 0; i < 4; ++i)
             {
@@ -107,6 +110,11 @@ namespace Crawler
                 else if (Sockets[i] == SocketType.Hall_1) {
                     Sockets[i] = SocketType.Hall_0;
                 }
+            }
+
+            if (Rot != 0)
+            {
+                Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
             }
         }
     }
@@ -302,14 +310,11 @@ public class WFC_Script : MonoBehaviour
     {
         InitMap(MapSize.x, MapSize.y);
 
-        uint x = 0;
         do {
             while(Spread()) {}
             yield return new WaitForSeconds(0.125f);
             Iteration();
-            x += 1;
         } while(Continue());
-        Debug.Log(string.Format("Finished at iteration: {0}", x));
 
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
