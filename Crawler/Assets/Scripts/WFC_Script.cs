@@ -34,16 +34,22 @@ namespace Crawler
 
         public List<SocketType> Sockets;
 
-        void SetRotation(int rotIdx) => SetRotationVec3(new Vector3(0, rotIdx*90, 0));
+        void SetRotation(int rotIdx)
+        {
+            SetRotationVec3(new Vector3(0, rotIdx * 90, 0));
+        }
         void SetRotationVec3(Vector3 Rot)
         {
             Rotation = Quaternion.Euler(Rot);
         }
 
-        public Tile(TileType type, int Rotation)
+        public Tile(TileType type, int Rot)
         {
+            Position = new Vector2Int();
+            Rotation = new Quaternion();
+            Sockets = new List<SocketType>();
             Type = type;
-            SetRotation(Rotation);
+            SetRotation(Rot);
 
             switch(type)
             {
@@ -86,14 +92,14 @@ namespace Crawler
             // TODO: check if indexing is right :)
             // (the order was 0 3 2 1 on the right side in the UE5)
             // (idk why lol)
-            Sockets[0] = DefaultSockets[(0+Rotation)%4];
-            Sockets[1] = DefaultSockets[(1+Rotation)%4];
-            Sockets[2] = DefaultSockets[(2+Rotation)%4];
-            Sockets[3] = DefaultSockets[(3+Rotation)%4];
+            Sockets[0] = DefaultSockets[(0+Rot)%4];
+            Sockets[1] = DefaultSockets[(1+Rot)%4];
+            Sockets[2] = DefaultSockets[(2+Rot)%4];
+            Sockets[3] = DefaultSockets[(3+Rot)%4];
 
-            for (uint i = 0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
-                if (Rotation % 2 == 0) { break; }
+                if (Rot % 2 == 0) { break; }
 
                 if (Sockets[i] == SocketType.Hall_0) {
                     Sockets[i] = SocketType.Hall_1;
@@ -117,24 +123,24 @@ public class WFC_Script : MonoBehaviour
     [SerializeField] List<Tile> TileTemplates = new List<Tile>();
 
     private void InitTemplates() {
-        for(uint i = 0; i < 4; ++i)
+        for(int i = 0; i < 4; ++i)
         {
-            TileTemplates.Add(Tile(TileType.Hall_I, i));
-            TileTemplates.Add(Tile(TileType.Hall_L, i));
-            TileTemplates.Add(Tile(TileType.Hall_T, i));
-            TileTemplates.Add(Tile(TileType.Hall_X, i));
+            TileTemplates.Add(new Tile(TileType.Hall_I, i));
+            TileTemplates.Add(new Tile(TileType.Hall_L, i));
+            TileTemplates.Add(new Tile(TileType.Hall_T, i));
+            TileTemplates.Add(new Tile(TileType.Hall_X, i));
             // TODO: Add the rest of the TileTypes
         }
-        TileTemplates.Add(Tile(TileType.Empty, i));
+        TileTemplates.Add(new Tile(TileType.Empty, 0));
         Console.WriteLine("[INFO] Check if all TileTypes have been inserted");
     }
 
-    private void InitMap(uint width, uint height)
+    private void InitMap(int width, int height)
     {
         InitTemplates();
-        Dictionary<Vector2Int, List<Tile>> Map;
-        for (uint y = 0; y < height; ++y) {
-            for (uint x = 0; x < width; ++x) {
+        Dictionary<Vector2Int, List<Tile>> Map = new Dictionary<Vector2Int, List<Tile>>();
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
                 Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
             }
         }
@@ -153,9 +159,9 @@ public class WFC_Script : MonoBehaviour
     private Vector2Int GetMinEntropyIdx()
     {
         Vector2Int CurrIdx = new Vector2Int(0, 0);
-        uint CurrMin = TileTemplates.Count;
-        uint Entropy = 0;
-        uint x = 0, y = 0;
+        int CurrMin = TileTemplates.Count;
+        int Entropy = 0;
+        int x = 0, y = 0;
 
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
@@ -172,17 +178,20 @@ public class WFC_Script : MonoBehaviour
     private void Iteration()
     {
         Tile SelectedTile;
+        Vector2Int MinEntropyIdx = GetMinEntropyIdx();
         List<Tile> MinEntropyCell = WFCMap[GetMinEntropyIdx()];
-        SelectedTile = MinEntropyCell[Random.Next(MinEntropyCell.Count)];
-        WFCMap[MinEntropyIdx] = new List<Tile>(SelectedTile);
+        SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
+        WFCMap[MinEntropyIdx] = new List<Tile>();
+        WFCMap[MinEntropyIdx].Add(SelectedTile);
+          
     }
 
     private bool Spread()
     {
         List<Tile> CellToCompare;
-        List<SocketType> AdjacentSockets;
+        List<SocketType> AdjacentSockets= new List<SocketType>();
         bool Changed = false;
-        uint PrevSize = 0;
+        int PrevSize = 0;
         Vector2Int CompareCoords = new Vector2Int(0, 0);
 
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
@@ -197,9 +206,9 @@ public class WFC_Script : MonoBehaviour
                     AdjacentSockets.Add(tile.Sockets[0]);
                 }
                 PrevSize = Cell.Value.Count;
-                for (uint i = 0; i < Cell.Value.Count; ++i) {
+                for (int i = 0; i < Cell.Value.Count; ++i) {
 					bool IsCompatible = false;
-					for (uint j = 0; j < AdjacentSockets.Count; ++j) {
+					for (int j = 0; j < AdjacentSockets.Count; ++j) {
 						IsCompatible |= Cell.Value[i].Sockets[2] == AdjacentSockets[j];
 					}
 					if (!IsCompatible) {
@@ -218,9 +227,9 @@ public class WFC_Script : MonoBehaviour
                     AdjacentSockets.Add(tile.Sockets[1]);
                 }
                 PrevSize = Cell.Value.Count;
-                for (uint i = 0; i < Cell.Value.Count; ++i) {
+                for (int i = 0; i < Cell.Value.Count; ++i) {
 					bool IsCompatible = false;
-					for (uint j = 0; j < AdjacentSockets.Count; ++j) {
+					for (int j = 0; j < AdjacentSockets.Count; ++j) {
 						IsCompatible |= Cell.Value[i].Sockets[3] == AdjacentSockets[j];
 					}
 					if (!IsCompatible) {
@@ -239,9 +248,9 @@ public class WFC_Script : MonoBehaviour
                     AdjacentSockets.Add(tile.Sockets[2]);
                 }
                 PrevSize = Cell.Value.Count;
-                for (uint i = 0; i < Cell.Value.Count; ++i) {
+                for (int i = 0; i < Cell.Value.Count; ++i) {
 					bool IsCompatible = false;
-					for (uint j = 0; j < AdjacentSockets.Count; ++j) {
+					for (int j = 0; j < AdjacentSockets.Count; ++j) {
 						IsCompatible |= Cell.Value[i].Sockets[0] == AdjacentSockets[j];
 					}
 					if (!IsCompatible) {
@@ -260,9 +269,9 @@ public class WFC_Script : MonoBehaviour
                     AdjacentSockets.Add(tile.Sockets[3]);
                 }
                 PrevSize = Cell.Value.Count;
-                for (uint i = 0; i < Cell.Value.Count; ++i) {
+                for (int i = 0; i < Cell.Value.Count; ++i) {
 					bool IsCompatible = false;
-					for (uint j = 0; j < AdjacentSockets.Count; ++j) {
+					for (int j = 0; j < AdjacentSockets.Count; ++j) {
 						IsCompatible |= Cell.Value[i].Sockets[1] == AdjacentSockets[j];
 					}
 					if (!IsCompatible) {
@@ -273,6 +282,7 @@ public class WFC_Script : MonoBehaviour
 				AdjacentSockets.Clear();							        // clear adjacent sockets list
             }
         }
+        return Changed;
     }
 
     public void GenerateWFCMap()
