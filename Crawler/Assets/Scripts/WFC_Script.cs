@@ -122,6 +122,8 @@ public class WFC_Script : MonoBehaviour
 
     [SerializeField] List<Tile> TileTemplates = new List<Tile>();
 
+
+    [SerializeField] Vector2Int MapSize = new Vector2Int(10,10);
     private void InitTemplates() {
         for(int i = 0; i < 4; ++i)
         {
@@ -291,7 +293,7 @@ public class WFC_Script : MonoBehaviour
 
     public void GenerateWFCMap()
     {
-        InitMap();
+        InitMap(MapSize.x, MapSize.y);
         while(Continue()) {
             while(Spread()) {}
             Iteration();
@@ -300,7 +302,10 @@ public class WFC_Script : MonoBehaviour
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
-            FinalWFCMap.Add(Cell.Value[0]);
+            Tile Jakkowliek = Cell.Value[0];
+            Jakkowliek.Position = Cell.Key;
+            FinalWFCMap.Add(Cell.Key, Jakkowliek);
+
         }
     }
 
@@ -314,9 +319,18 @@ public class WFC_Script : MonoBehaviour
     }
 
     // Start is called before the first frame update
+
+    void SpawnMap()
+    {
+        foreach(KeyValuePair<Vector2Int, Tile> Cell in FinalWFCMap)
+        {
+            PlaceRoom(Cell.Value);
+        }
+    }
     void Start()
     {
-       
+        GenerateWFCMap();
+        SpawnMap();
     }
 
 
