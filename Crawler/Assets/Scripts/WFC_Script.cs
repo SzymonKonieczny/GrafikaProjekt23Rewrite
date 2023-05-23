@@ -66,16 +66,16 @@ namespace Crawler
                 Sockets.Add(SocketType.Empty_S); // X-
                 break;
             case TileType.Hall_L:
-                Sockets.Add(SocketType.Empty_S); // Z+
-                Sockets.Add(SocketType.Hall_1);  // X+
-                Sockets.Add(SocketType.Hall_0);  // Z-
-                Sockets.Add(SocketType.Empty_S); // X-
+                Sockets.Add(SocketType.Hall_0);  // Z+
+                Sockets.Add(SocketType.Empty_S); // X+
+                Sockets.Add(SocketType.Empty_S); // Z-
+                Sockets.Add(SocketType.Hall_1);  // X-
                 break;
             case TileType.Hall_T:
                 Sockets.Add(SocketType.Hall_0);  // Z+
-                Sockets.Add(SocketType.Empty_S); // X+
+                Sockets.Add(SocketType.Hall_1);  // X+
                 Sockets.Add(SocketType.Hall_0);  // Z-
-                Sockets.Add(SocketType.Hall_1);  // X-
+                Sockets.Add(SocketType.Empty_S); // X-
                 break;
             case TileType.Hall_X:
                 Sockets.Add(SocketType.Hall_0);  // Z+
@@ -93,9 +93,9 @@ namespace Crawler
             // (the order was 0 3 2 1 on the right side in the UE5)
             // (idk why lol)
             Sockets[0] = DefaultSockets[(0+Rot)%4];
-            Sockets[1] = DefaultSockets[(3+Rot)%4];
+            Sockets[1] = DefaultSockets[(1+Rot)%4];
             Sockets[2] = DefaultSockets[(2+Rot)%4];
-            Sockets[3] = DefaultSockets[(1+Rot)%4];
+            Sockets[3] = DefaultSockets[(3+Rot)%4];
 
             for (int i = 0; i < 4; ++i)
             {
@@ -187,11 +187,9 @@ public class WFC_Script : MonoBehaviour
         List<Tile> MinEntropyCell = WFCMap[GetMinEntropyIdx()];
         SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
 
-        Debug.Log(string.Format("Spawning tile at {0}", MinEntropyIdx.ToString()));
         SelectedTile.Position = MinEntropyIdx;
         FinalWFCMap.Add(MinEntropyIdx, SelectedTile);
         PlaceRoom(SelectedTile);
-        Debug.Log("Spawned Tile");
 
         WFCMap[MinEntropyIdx] = new List<Tile>();
         WFCMap[MinEntropyIdx].Add(SelectedTile);
@@ -307,7 +305,7 @@ public class WFC_Script : MonoBehaviour
         uint x = 0;
         do {
             while(Spread()) {}
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.125f);
             Iteration();
             x += 1;
         } while(Continue());
@@ -331,7 +329,6 @@ public class WFC_Script : MonoBehaviour
         //if(tile.Type!=TileType.Empty)
         //go.transform.Rotate(new Vector3(1, 0, 0), 90);
       
-        Debug.Log(string.Format("Tile pos: {0}", tile.Position));
         PlacedRooms.Add(tile.Position, go);
     }
 
