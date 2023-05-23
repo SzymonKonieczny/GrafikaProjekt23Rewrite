@@ -188,15 +188,19 @@ public class WFC_Script : MonoBehaviour
 
     private bool Spread()
     {
-        List<Tile> CellToCompare;
+        List<Tile> CellToCompare = new List<Tile>();
         List<SocketType> AdjacentSockets= new List<SocketType>();
         bool Changed = false;
         int PrevSize = 0;
         Vector2Int CompareCoords = new Vector2Int(0, 0);
+        int x = 0, y = 0;
 
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
             if (Cell.Value.Count == 1) { continue; }
+
+            x = Cell.Key.x;
+            y = Cell.Key.y;
 
             CompareCoords = new Vector2Int(x, y-1);
             if (WFCMap.ContainsKey(CompareCoords)) {
