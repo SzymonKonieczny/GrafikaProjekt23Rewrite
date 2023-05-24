@@ -72,7 +72,7 @@ public class Look : MonoBehaviour
     }
     public void AttatchToHand(Transform ToHold)
     {
-         
+        if (Hand.transform.childCount > 0) DropHeldItem(ToHold.position);
         if(ToHold.TryGetComponent(out Rigidbody rb))
         {
             rb.isKinematic = true;
