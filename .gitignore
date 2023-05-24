@@ -39,3 +39,4 @@ sysinfo.txt
 # DODANE PRZEZ MAĆKA :P
 Crawler/Logs/*
 Crawler/UserSettings/*
+Crawler/Logs/AssetImportWorker0.log
