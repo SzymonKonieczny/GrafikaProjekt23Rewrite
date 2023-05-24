@@ -48,32 +48,7 @@ public class MovementScript : MonoBehaviour
         
 
 
-       /* RaycastHit hit;
-
-       if (Input.GetKeyDown(KeyCode.F))
-       { 
-            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 100, WeapoPickMask))
-        {
-           
-            item = hit.transform.GetComponent<LayingItem>();
-            if (item != null)
-            {
-
-
-                    inventory.AddItem(item.item_identity);
-                    item.Destroy_me();
-
-                
-            }
-                Debug.Log("RAyShot");
-                if (hit.transform.GetComponent<ItemCrate>()!=null)
-                {
-                    Debug.Log("RayHitACrate");
-                    hit.transform.GetComponent<ItemCrate>().Open();
-                }
-        }
-       }
-       */
+      
       
 
 

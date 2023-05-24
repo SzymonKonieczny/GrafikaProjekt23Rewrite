@@ -12,8 +12,9 @@ public class Look : MonoBehaviour
     public float maxAngle;
     public static bool CursorLocked = true;
     bool cursorlockcooldown;
-     [SerializeField] Camera camera;
-
+    [SerializeField] LayerMask RayMask;
+    [SerializeField] Camera camera;
+    public Transform Hand;
     Quaternion camcenter;
     #endregion
     void Update()
@@ -22,7 +23,7 @@ public class Look : MonoBehaviour
         setY();
         setX();
         if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape)) StartCoroutine(UpdateCursorLock());
-
+        InteractionRay();
 
     }
     public void UpdateCursorLockFromAnOutsideScript()
@@ -32,16 +33,16 @@ public class Look : MonoBehaviour
     void setY()
     {
         float t_input = Input.GetAxis("Mouse Y") * ysens * Time.deltaTime;
-        Quaternion t_adjust = Quaternion.AngleAxis(t_input,-Vector3.right);
-        Quaternion t_delta = cams.localRotation* t_adjust;
+        Quaternion t_adjust = Quaternion.AngleAxis(t_input, -Vector3.right);
+        Quaternion t_delta = cams.localRotation * t_adjust;
 
         if (Quaternion.Angle(camcenter, t_delta) < maxAngle)
         {
             cams.localRotation = t_delta;
             //weapon.localRotation = t_delta;
-         }
+        }
 
-       
+
     }
     void setX()
     {
@@ -53,7 +54,7 @@ public class Look : MonoBehaviour
     IEnumerator UpdateCursorLock()
     {
         cursorlockcooldown = true;
-       if(CursorLocked)
+        if (CursorLocked)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -68,5 +69,39 @@ public class Look : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
         cursorlockcooldown = false;
+    }
+    void InteractionRay()
+    {
+        RaycastHit hit;
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (Physics.Raycast(cams.transform.position, cams.transform.forward, out hit, 100, RayMask))
+            {
+               bool isInteractive = hit.transform.gameObject.TryGetComponent ( out IInteractible LookingAt);
+
+                if (isInteractive)
+                {
+                    LookingAt.Interact(this, gameObject.GetComponent<MovementScript>());
+                    Debug.Log("Interacting");
+                }
+                else
+                {
+
+                    if (Hand.transform.childCount > 0)
+                    {
+                        Transform[] Held = Hand.GetComponentsInChildren<Transform>();
+                       Hand.transform.DetachChildren();
+                        foreach(Transform t in Held)
+                        {
+                            t.position = hit.transform.position + new Vector3(0, 0.5f, 0);
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+
     }
 }
