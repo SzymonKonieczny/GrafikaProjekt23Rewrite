@@ -37,5 +37,5 @@ sysinfo.txt
 *.unitypackage
 
 # DODANE PRZEZ MAĆKA :P
-Crawler/Logs/
-Crawler/UserSettings/
+Crawler/Logs/*
+Crawler/UserSettings/*
