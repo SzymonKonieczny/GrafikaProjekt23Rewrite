@@ -70,38 +70,61 @@ public class Look : MonoBehaviour
         yield return new WaitForSeconds(1f);
         cursorlockcooldown = false;
     }
+    public void AttatchToHand(Transform ToHold)
+    {
+         
+        if(ToHold.TryGetComponent(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+        }
+        ToHold.SetParent(Hand);
+        ToHold.localPosition = new Vector3(0, 0, 0);
+        ToHold.localEulerAngles = new Vector3(0, 0, 0);
+    }
+    void DropHeldItem(Vector3 PlaceTransform)
+    {
+        if (Hand.transform.childCount > 0)
+        {
+            Transform[] Held = Hand.GetComponentsInChildren<Transform>();
+            Hand.transform.DetachChildren();
+            foreach (Transform t in Held)
+            {
+                if (t.name == "Hand") continue;
+                Debug.Log(t.name);
+                if (t.TryGetComponent(out Rigidbody rb))
+                {
+                    rb.isKinematic = false;
+                }
+                t.position = PlaceTransform + new Vector3(0, 0.5f, 0);
+            }
+
+        }
+    }
     void InteractionRay()
     {
         RaycastHit hit;
-
+        bool AlreadyInteracted = false;
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (Physics.Raycast(cams.transform.position, cams.transform.forward, out hit, 100, RayMask))
+            if (Physics.Raycast(cams.transform.position, cams.transform.forward, out hit, 100))
             {
                bool isInteractive = hit.transform.gameObject.TryGetComponent ( out IInteractible LookingAt);
 
                 if (isInteractive)
                 {
+
                     LookingAt.Interact(this, gameObject.GetComponent<MovementScript>());
                     Debug.Log("Interacting");
+                    AlreadyInteracted = true;
                 }
                 else
                 {
-
-                    if (Hand.transform.childCount > 0)
-                    {
-                        Transform[] Held = Hand.GetComponentsInChildren<Transform>();
-                       Hand.transform.DetachChildren();
-                        foreach(Transform t in Held)
-                        {
-                            t.position = hit.transform.position + new Vector3(0, 0.5f, 0);
-                        }
-                        
-                    }
+                    DropHeldItem(hit.point);
                 }
             }
+           
         }
-
+            //if (!AlreadyInteracted)DropHeldItem(transform);
 
     }
 }
