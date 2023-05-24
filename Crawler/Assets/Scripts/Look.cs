@@ -89,7 +89,7 @@ public class Look : MonoBehaviour
             Hand.transform.DetachChildren();
             foreach (Transform t in Held)
             {
-                if (t.name == "Hand") continue;
+                if (t.name == "Hand") continue; //VERY TEMPORARY, first element is the hand (so not a child, buuuut i guess according to Unity yeah)
                 Debug.Log(t.name);
                 if (t.TryGetComponent(out Rigidbody rb))
                 {
