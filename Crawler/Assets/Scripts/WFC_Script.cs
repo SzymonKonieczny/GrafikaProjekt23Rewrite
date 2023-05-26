@@ -18,7 +18,7 @@ namespace Crawler
         RoomEntrance,
         RoomWall,
     }
-
+    [System.Serializable]
     enum SocketType
     {
         Empty_S,
@@ -26,6 +26,7 @@ namespace Crawler
         Hall_1,     // on X axis
     }
 
+        [System.Serializable]
     struct Tile 
     {
         public Vector2Int Position;
@@ -33,7 +34,7 @@ namespace Crawler
         public Quaternion Rotation;
 
         public List<SocketType> Sockets;
-
+            
         void SetRotation(int rotIdx)
         {
             SetRotationVec3(new Vector3(0, -(rotIdx%4) * 90, 0));
@@ -128,6 +129,8 @@ public class WFC_Script : MonoBehaviour
     [SerializeField] Dictionary<Vector2Int, List<Tile>> WFCMap;
     [SerializeField] Dictionary<Vector2Int, Tile> FinalWFCMap;
 
+
+    [SerializeField] List<Tile> WCFMapListCopy = new List<Tile>();
     [SerializeField] List<Tile> TileTemplates = new List<Tile>();
 
 
@@ -197,6 +200,7 @@ public class WFC_Script : MonoBehaviour
 
         SelectedTile.Position = MinEntropyIdx;
         FinalWFCMap.Add(MinEntropyIdx, SelectedTile);
+        WCFMapListCopy.Add(SelectedTile);
         PlaceRoom(SelectedTile);
 
         WFCMap[MinEntropyIdx] = new List<Tile>();
