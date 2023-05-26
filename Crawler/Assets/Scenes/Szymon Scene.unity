@@ -289,7 +289,9 @@ MonoBehaviour:
   - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
   - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
   - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
-  MapSize: {x: 5, y: 5}
+  WCFMapListCopy: []
+  TileTemplates: []
+  MapSize: {x: 3, y: 3}
   GridSize: 18
 --- !u!4 &318749737
 Transform:
