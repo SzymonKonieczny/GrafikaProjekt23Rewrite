@@ -32,6 +32,7 @@ namespace Crawler
         public Vector2Int Position;
         public TileType Type;
         public Quaternion Rotation;
+        public int RotationInt;
 
         public List<SocketType> Sockets;
             
@@ -50,6 +51,7 @@ namespace Crawler
             Rotation = new Quaternion();
             Sockets = new List<SocketType>();
             Type = type;
+            RotationInt = Rot;
             SetRotation(Rot);
 
             switch(type)
@@ -139,13 +141,24 @@ public class WFC_Script : MonoBehaviour
 
 
     private void InitTemplates() {
-        for(int i = 0; i < 4; ++i)
+        const int PriorityEmpty = 2;
+        const int PriorityI = 3;
+        const int PriorityL = 3;
+        const int PriorityT = 2;
+        const int PriorityX = 1;
+
+        for (int i = 0; i < 4; ++i)
         {
-            TileTemplates.Add(new Tile(TileType.Empty, i));
-            TileTemplates.Add(new Tile(TileType.Hall_I, i));
-            // TileTemplates.Add(new Tile(TileType.Hall_L, i));
-            TileTemplates.Add(new Tile(TileType.Hall_T, i));
-            // TileTemplates.Add(new Tile(TileType.Hall_X, i));
+            for (int j = 0; j < PriorityEmpty; ++j)
+                TileTemplates.Add(new Tile(TileType.Empty, i));
+            for (int j = 0; j < PriorityI; ++j)
+                TileTemplates.Add(new Tile(TileType.Hall_I, i));
+            for (int j = 0; j < PriorityL; ++j)
+                TileTemplates.Add(new Tile(TileType.Hall_L, i));
+            for (int j = 0; j < PriorityT; ++j)
+                TileTemplates.Add(new Tile(TileType.Hall_T, i));
+            for (int j = 0; j < PriorityX; ++j)
+                TileTemplates.Add(new Tile(TileType.Hall_X, i));
             // TODO: Add the rest of the TileTypes
         }
         Debug.LogWarning("Check if all TileTypes have been inserted");
@@ -478,7 +491,7 @@ public class WFC_Script : MonoBehaviour
 
         // if(tile.Type != TileType.Empty || tile.Type != TileType.Hall_I)
         //     go.transform.Rotate(new Vector3(0, 1, 0), 180);
-        if(tile.Type == TileType.Hall_L)
+        if((tile.Type == TileType.Hall_T || tile.Type == TileType.Hall_L) && tile.RotationInt%2 == 0)
             go.transform.Rotate(new Vector3(0, 1, 0), 180);
       
         PlacedRooms.Add(tile.Position, go);
