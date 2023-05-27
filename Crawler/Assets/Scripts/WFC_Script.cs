@@ -92,8 +92,8 @@ namespace Crawler
 
             if (Rot != 0)
             {
-                Debug.LogWarning(string.Format("tile: {0} | rotation: {1}", type.ToString(), Rot));
-                Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
+                // Debug.LogWarning(string.Format("tile: {0} | rotation: {1}", type.ToString(), Rot));
+                // Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
             }
             
             Sockets[0] = DefaultSockets[(4-Rot)%4];
@@ -115,7 +115,7 @@ namespace Crawler
 
             if (Rot != 0)
             {
-                Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
+                // Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
             }
         }
     }
@@ -141,13 +141,13 @@ public class WFC_Script : MonoBehaviour
     private void InitTemplates() {
         for(int i = 0; i < 4; ++i)
         {
+            TileTemplates.Add(new Tile(TileType.Empty, i));
             TileTemplates.Add(new Tile(TileType.Hall_I, i));
-            TileTemplates.Add(new Tile(TileType.Hall_L, i));
+            // TileTemplates.Add(new Tile(TileType.Hall_L, i));
             TileTemplates.Add(new Tile(TileType.Hall_T, i));
-            TileTemplates.Add(new Tile(TileType.Hall_X, i));
+            // TileTemplates.Add(new Tile(TileType.Hall_X, i));
             // TODO: Add the rest of the TileTypes
         }
-        TileTemplates.Add(new Tile(TileType.Empty, 0));
         Debug.LogWarning("Check if all TileTypes have been inserted");
     }
 
@@ -155,11 +155,23 @@ public class WFC_Script : MonoBehaviour
     {
         InitTemplates();
         Dictionary<Vector2Int, List<Tile>> Map = new Dictionary<Vector2Int, List<Tile>>();
+        List<Tile> EmptyCell = new List<Tile>();
+        EmptyCell.Add(new Tile(TileType.Empty, 0));
+
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
+                // if (x == 0 || y == 0 || x == width-1 || y == height-1)
+                // {
+                //     Map[new Vector2Int(x, y)].Add(new Tile(TileType.Empty, 0));
+                // }
+                // else
+                // {
+                //     Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
+                // }
             }
         }
+
         WFCMap = new Dictionary<Vector2Int, List<Tile>>(Map);
     }
 
@@ -167,14 +179,14 @@ public class WFC_Script : MonoBehaviour
     {
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
-            if(Cell.Value.Count > 1) { return true; }
+            if (Cell.Value.Count > 1) { return true; }
         }
         return false;
     }
 
     private Vector2Int GetMinEntropyIdx()
     {
-        Vector2Int CurrIdx = new Vector2Int(0, 0);
+        Vector2Int CurrIdx = new Vector2Int(1, 1);
         int CurrMin = TileTemplates.Count;
         int Entropy = 0;
 
@@ -191,7 +203,7 @@ public class WFC_Script : MonoBehaviour
         return CurrIdx;
     }
 
-    private void Iteration()
+    private Vector2Int Iteration()
     {
         Tile SelectedTile;
         Vector2Int MinEntropyIdx = GetMinEntropyIdx();
@@ -205,9 +217,127 @@ public class WFC_Script : MonoBehaviour
 
         WFCMap[MinEntropyIdx] = new List<Tile>();
         WFCMap[MinEntropyIdx].Add(SelectedTile);
+
+        return MinEntropyIdx;
     }
 
-    private bool Spread()
+    private void Spread(Vector2Int IdxToCheck)
+    {
+        if (!WFCMap.ContainsKey(IdxToCheck))
+        {
+            return;
+        }
+
+        List<Tile> CellToCompare = new List<Tile>();
+        List<SocketType> AvailableSockets = new List<SocketType>();
+        bool Changed = false;
+        int PrevSize = 0;
+        Vector2Int CompareIdx = new Vector2Int(0, 0);
+        int x = IdxToCheck.x, z = IdxToCheck.y;
+
+        // 1. go to each direction from Idx
+        CompareIdx = new Vector2Int(x+1, z);
+        if (WFCMap.ContainsKey(CompareIdx))
+        {
+            CellToCompare = WFCMap[CompareIdx];
+            // 2. check adjacent sockets
+            foreach (Tile tile in WFCMap[IdxToCheck])
+            {
+                AvailableSockets.Add(tile.Sockets[0]);
+            }
+
+            // 3. if sockets dont match, remove tiles 
+            PrevSize = WFCMap[CompareIdx].Count;
+            // TODO: Check if it works correctly!!!
+            WFCMap[CompareIdx].RemoveAll((t) => {
+                return !AvailableSockets.Contains(t.Sockets[2]);
+            });
+
+            // 4. if removal was done, call Spread() on this Idx
+            if (WFCMap[CompareIdx].Count != PrevSize)
+            {
+                Spread(CompareIdx);
+            }
+            AvailableSockets.Clear();
+        }
+
+        CompareIdx = new Vector2Int(x, z-1);
+        if (WFCMap.ContainsKey(CompareIdx))
+        {
+            CellToCompare = WFCMap[CompareIdx];
+            // 2. check adjacent sockets
+            foreach (Tile tile in WFCMap[IdxToCheck])
+            {
+                AvailableSockets.Add(tile.Sockets[1]);
+            }
+
+            // 3. if sockets dont match, remove tiles 
+            PrevSize = WFCMap[CompareIdx].Count;
+            // TODO: Check if it works correctly!!!
+            WFCMap[CompareIdx].RemoveAll((t) => {
+                return !AvailableSockets.Contains(t.Sockets[3]);
+            });
+
+            // 4. if removal was done, call Spread() on this Idx
+            if (WFCMap[CompareIdx].Count != PrevSize)
+            {
+                Spread(CompareIdx);
+            }
+            AvailableSockets.Clear();
+        }
+
+        CompareIdx = new Vector2Int(x-1, z);
+        if (WFCMap.ContainsKey(CompareIdx))
+        {
+            CellToCompare = WFCMap[CompareIdx];
+            // 2. check adjacent sockets
+            foreach (Tile tile in WFCMap[IdxToCheck])
+            {
+                AvailableSockets.Add(tile.Sockets[2]);
+            }
+
+            // 3. if sockets dont match, remove tiles 
+            PrevSize = WFCMap[CompareIdx].Count;
+            // TODO: Check if it works correctly!!!
+            WFCMap[CompareIdx].RemoveAll((t) => {
+                return !AvailableSockets.Contains(t.Sockets[0]);
+            });
+
+            // 4. if removal was done, call Spread() on this Idx
+            if (WFCMap[CompareIdx].Count != PrevSize)
+            {
+                Spread(CompareIdx);
+            }
+            AvailableSockets.Clear();
+        }
+
+        CompareIdx = new Vector2Int(x, z+1);
+        if (WFCMap.ContainsKey(CompareIdx))
+        {
+            CellToCompare = WFCMap[CompareIdx];
+            // 2. check adjacent sockets
+            foreach (Tile tile in WFCMap[IdxToCheck])
+            {
+                AvailableSockets.Add(tile.Sockets[3]);
+            }
+
+            // 3. if sockets dont match, remove tiles 
+            PrevSize = WFCMap[CompareIdx].Count;
+            // TODO: Check if it works correctly!!!
+            WFCMap[CompareIdx].RemoveAll((t) => {
+                return !AvailableSockets.Contains(t.Sockets[1]);
+            });
+
+            // 4. if removal was done, call Spread() on this Idx
+            if (WFCMap[CompareIdx].Count != PrevSize)
+            {
+                Spread(CompareIdx);
+            }
+            AvailableSockets.Clear();
+        }
+    }
+
+    private bool SpreadOld()
     {
         List<Tile> CellToCompare = new List<Tile>();
         List<SocketType> AdjacentSockets= new List<SocketType>();
@@ -315,18 +445,28 @@ public class WFC_Script : MonoBehaviour
         InitMap(MapSize.x, MapSize.y);
 
         do {
-            while(Spread()) {}
+            Spread(Iteration());
             yield return new WaitForSeconds(0.125f);
-            Iteration();
         } while(Continue());
 
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
         foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
         {
+            if (Cell.Value.Count == 0)
+            {
+                Debug.LogError(string.Format(
+                    "Cell without any tiles possible at {0}, {1}!",
+                    Cell.Key.x,
+                    Cell.Key.y
+                ));
+                continue;
+            }
             Tile MapTile = Cell.Value[0];
             MapTile.Position = Cell.Key;
             FinalWFCMap.Add(Cell.Key, MapTile);
         }
+
+        Debug.Log("WFC Finished");
     }
 
     
@@ -335,8 +475,11 @@ public class WFC_Script : MonoBehaviour
         GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
         go.transform.position = new Vector3(tile.Position.x*GridSize, 0, tile.Position.y*GridSize);
         go.transform.rotation = tile.Rotation;
-        //if(tile.Type!=TileType.Empty)
-        //go.transform.Rotate(new Vector3(1, 0, 0), 90);
+
+        // if(tile.Type != TileType.Empty || tile.Type != TileType.Hall_I)
+        //     go.transform.Rotate(new Vector3(0, 1, 0), 180);
+        if(tile.Type == TileType.Hall_L)
+            go.transform.Rotate(new Vector3(0, 1, 0), 180);
       
         PlacedRooms.Add(tile.Position, go);
     }
