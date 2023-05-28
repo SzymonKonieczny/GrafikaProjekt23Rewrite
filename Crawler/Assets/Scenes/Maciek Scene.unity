@@ -158,12 +158,13 @@ MonoBehaviour:
   - {fileID: 8785848329351094923, guid: acb2bcc5eb3722c4da960ebba48ad94a, type: 3}
   - {fileID: 8785848329351094923, guid: 9f735c9dea2f50d42a5c475571f746d8, type: 3}
   - {fileID: 8785848329351094923, guid: e5a9d493e92689f4087425153aa4f377, type: 3}
-  - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
-  - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
+  - {fileID: 919132149155446097, guid: 5c9c671477001c54386da364e2572766, type: 3}
+  - {fileID: 919132149155446097, guid: 9322f48588a13c34dbd77acd7600b9df, type: 3}
+  - {fileID: 919132149155446097, guid: a3e337116fbc92140b52f9f63dd7c56e, type: 3}
   - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
   WCFMapListCopy: []
   TileTemplates: []
-  MapSize: {x: 3, y: 3}
+  MapSize: {x: 15, y: 15}
   GridSize: 18
 --- !u!4 &318749737
 Transform:
@@ -497,7 +498,7 @@ MonoBehaviour:
   cam: {fileID: 792379051}
   speed: 10
   SprintMultiplier: 2
-  Gravity: -1.81
+  Gravity: -9.81
   GroundCheck: {fileID: 687797672}
   GroundDistancs: 0.5
   groundMask:
