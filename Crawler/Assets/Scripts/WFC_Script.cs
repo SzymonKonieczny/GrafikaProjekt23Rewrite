@@ -14,19 +14,26 @@ namespace Crawler
         Hall_L,
         Hall_T,
         Hall_X,
-        RoomCorner,
         RoomEntrance,
         RoomWall,
+        RoomCorner,
+        RoomInterior,
     }
+
     [System.Serializable]
     enum SocketType
     {
         Empty_S,
-        Hall_0,     // on Z axis
-        Hall_1,     // on X axis
+        Hall_0,
+        Hall_1,
+        Wall_0,
+        Wall_1,
+        Wall_2,
+        Wall_3,
+        RoomInterior,
     }
 
-        [System.Serializable]
+    [System.Serializable]
     struct Tile 
     {
         public Vector2Int Position;
@@ -35,6 +42,20 @@ namespace Crawler
         public int RotationInt;
 
         public List<SocketType> Sockets;
+
+        SocketType RotateSocket(SocketType Socket, int Rotation)
+        {
+            List<SocketType> Sockets = new List<SocketType>();
+            Sockets.Add(SocketType.Wall_0);
+            Sockets.Add(SocketType.Wall_3);
+            Sockets.Add(SocketType.Wall_2);
+            Sockets.Add(SocketType.Wall_1);
+
+            if (!Sockets.Contains(Socket)) return Socket;
+
+            int CurrentIdx = Sockets.LastIndexOf(Socket);
+            return Sockets[(CurrentIdx + Rotation) % 4];
+        }
             
         void SetRotation(int rotIdx)
         {
@@ -86,17 +107,35 @@ namespace Crawler
                 Sockets.Add(SocketType.Hall_1);  // X-
                 Sockets.Add(SocketType.Hall_0);  // Z+
                 break;
+            case TileType.RoomEntrance:
+                Sockets.Add(SocketType.RoomInterior);  // X-
+                Sockets.Add(SocketType.Wall_0);        // Z-
+                Sockets.Add(SocketType.Hall_1);        // X+
+                Sockets.Add(SocketType.Wall_0);        // Z+
+                break;
+            case TileType.RoomWall:
+                Sockets.Add(SocketType.Wall_3);        // X+
+                Sockets.Add(SocketType.Empty_S);       // Z-
+                Sockets.Add(SocketType.Wall_3);        // X-
+                Sockets.Add(SocketType.RoomInterior);  // Z+
+                break;
+            case TileType.RoomCorner:
+                Sockets.Add(SocketType.Empty_S);  // X+
+                Sockets.Add(SocketType.Empty_S);  // Z-
+                Sockets.Add(SocketType.Wall_2);   // X-
+                Sockets.Add(SocketType.Wall_1);   // Z+
+                break;
+            case TileType.RoomInterior:
+                Sockets.Add(SocketType.RoomInterior);  // X+
+                Sockets.Add(SocketType.RoomInterior);  // Z-
+                Sockets.Add(SocketType.RoomInterior);  // X-
+                Sockets.Add(SocketType.RoomInterior);  // Z+
+                break;
             default:
                 throw new System.Exception(string.Format("{0} NOT IMPLEMENTED YET", type.ToString()));
             }
 
             List<SocketType> DefaultSockets = new List<SocketType>(Sockets);
-
-            if (Rot != 0)
-            {
-                // Debug.LogWarning(string.Format("tile: {0} | rotation: {1}", type.ToString(), Rot));
-                // Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
-            }
             
             Sockets[0] = DefaultSockets[(4-Rot)%4];
             Sockets[3] = DefaultSockets[(7-Rot)%4];
@@ -105,23 +144,24 @@ namespace Crawler
 
             for (int i = 0; i < 4; ++i)
             {
-                if (Rot % 2 == 0) { break; }
+                if (Sockets[i] == SocketType.Empty_S || Sockets[i] == SocketType.Hall_0 || Sockets[i] == SocketType.Hall_1)
+                {
+                    if (Rot % 2 == 0) { break; }
 
-                if (Sockets[i] == SocketType.Hall_0) {
-                    Sockets[i] = SocketType.Hall_1;
+                    if (Sockets[i] == SocketType.Hall_0) {
+                        Sockets[i] = SocketType.Hall_1;
+                    }
+                    else if (Sockets[i] == SocketType.Hall_1) {
+                        Sockets[i] = SocketType.Hall_0;
+                    }
                 }
-                else if (Sockets[i] == SocketType.Hall_1) {
-                    Sockets[i] = SocketType.Hall_0;
+                else
+                {
+                    Sockets[i] = RotateSocket(Sockets[i], Rot);
                 }
-            }
-
-            if (Rot != 0)
-            {
-                // Debug.Log(string.Format("X+: {0} | Z-: {1} | X-: {2} | Z+: {3}", Sockets[0].ToString(), Sockets[1].ToString(), Sockets[2].ToString(), Sockets[3].ToString()));
             }
         }
     }
-
 }
 
 public class WFC_Script : MonoBehaviour
@@ -141,11 +181,12 @@ public class WFC_Script : MonoBehaviour
 
 
     private void InitTemplates() {
-        const int PriorityEmpty = 2;
-        const int PriorityI = 3;
-        const int PriorityL = 3;
-        const int PriorityT = 2;
-        const int PriorityX = 1;
+        const int PriorityEmpty = 4;
+        const int PriorityI     = 1;
+        const int PriorityL     = 3;
+        const int PriorityT     = 3;
+        const int PriorityX     = 1;
+        const int PriorityRoom  = 30;
 
         for (int i = 0; i < 4; ++i)
         {
@@ -159,9 +200,14 @@ public class WFC_Script : MonoBehaviour
                 TileTemplates.Add(new Tile(TileType.Hall_T, i));
             for (int j = 0; j < PriorityX; ++j)
                 TileTemplates.Add(new Tile(TileType.Hall_X, i));
-            // TODO: Add the rest of the TileTypes
+            for (int j = 0; j < PriorityRoom; ++j)
+            {
+                TileTemplates.Add(new Tile(TileType.RoomInterior, i));
+                TileTemplates.Add(new Tile(TileType.RoomCorner, i));
+                TileTemplates.Add(new Tile(TileType.RoomEntrance, i));
+                TileTemplates.Add(new Tile(TileType.RoomWall, i));
+            }
         }
-        Debug.LogWarning("Check if all TileTypes have been inserted");
     }
 
     private void InitMap(int width, int height)
@@ -174,14 +220,6 @@ public class WFC_Script : MonoBehaviour
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
-                // if (x == 0 || y == 0 || x == width-1 || y == height-1)
-                // {
-                //     Map[new Vector2Int(x, y)].Add(new Tile(TileType.Empty, 0));
-                // }
-                // else
-                // {
-                //     Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
-                // }
             }
         }
 
@@ -491,8 +529,14 @@ public class WFC_Script : MonoBehaviour
 
         // if(tile.Type != TileType.Empty || tile.Type != TileType.Hall_I)
         //     go.transform.Rotate(new Vector3(0, 1, 0), 180);
-        if((tile.Type == TileType.Hall_T || tile.Type == TileType.Hall_L) && tile.RotationInt%2 == 0)
+        if (tile.Type != TileType.Hall_I && tile.RotationInt%2 == 0)
             go.transform.Rotate(new Vector3(0, 1, 0), 180);
+
+        if (tile.Type == TileType.RoomEntrance || tile.Type == TileType.RoomWall || tile.Type == TileType.RoomCorner)
+            go.transform.localScale=new Vector3(2, 2, 2);
+
+        // if (tile.Type == TileType.RoomCorner)
+        //     go.transform.Rotate(new Vector3(0, 1, 0), -90);
       
         PlacedRooms.Add(tile.Position, go);
     }
