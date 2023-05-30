@@ -47,14 +47,14 @@ namespace Crawler
         {
             List<SocketType> Sockets = new List<SocketType>();
             Sockets.Add(SocketType.Wall_0);
-            Sockets.Add(SocketType.Wall_3);
-            Sockets.Add(SocketType.Wall_2);
             Sockets.Add(SocketType.Wall_1);
+            Sockets.Add(SocketType.Wall_2);
+            Sockets.Add(SocketType.Wall_3);
 
             if (!Sockets.Contains(Socket)) return Socket;
 
             int CurrentIdx = Sockets.LastIndexOf(Socket);
-            return Sockets[(CurrentIdx + Rotation) % 4];
+            return Sockets[(7-(CurrentIdx + Rotation)) % 4];
         }
             
         void SetRotation(int rotIdx)
@@ -108,22 +108,22 @@ namespace Crawler
                 Sockets.Add(SocketType.Hall_0);  // Z+
                 break;
             case TileType.RoomEntrance:
-                Sockets.Add(SocketType.RoomInterior);  // X-
+                Sockets.Add(SocketType.Hall_1);        // X-
                 Sockets.Add(SocketType.Wall_0);        // Z-
-                Sockets.Add(SocketType.Hall_1);        // X+
+                Sockets.Add(SocketType.RoomInterior);  // X+
                 Sockets.Add(SocketType.Wall_0);        // Z+
                 break;
             case TileType.RoomWall:
                 Sockets.Add(SocketType.Wall_3);        // X+
-                Sockets.Add(SocketType.Empty_S);       // Z-
+                Sockets.Add(SocketType.RoomInterior);  // Z-
                 Sockets.Add(SocketType.Wall_3);        // X-
-                Sockets.Add(SocketType.RoomInterior);  // Z+
+                Sockets.Add(SocketType.Empty_S);       // Z+
                 break;
             case TileType.RoomCorner:
                 Sockets.Add(SocketType.Empty_S);  // X+
                 Sockets.Add(SocketType.Empty_S);  // Z-
-                Sockets.Add(SocketType.Wall_2);   // X-
-                Sockets.Add(SocketType.Wall_1);   // Z+
+                Sockets.Add(SocketType.Wall_1);   // X-
+                Sockets.Add(SocketType.Wall_0);   // Z+
                 break;
             case TileType.RoomInterior:
                 Sockets.Add(SocketType.RoomInterior);  // X+
@@ -205,11 +205,14 @@ public class WFC_Script : MonoBehaviour
                 TileTemplates.Add(new Tile(TileType.Hall_X, i));
             for (int j = 0; j < PriorityRoom; ++j)
             {
-                TileTemplates.Add(new Tile(TileType.RoomInterior, i));
                 TileTemplates.Add(new Tile(TileType.RoomCorner, i));
-                TileTemplates.Add(new Tile(TileType.RoomEntrance, i));
-                TileTemplates.Add(new Tile(TileType.RoomWall, i));
             }
+            for (int j = 0; j < PriorityRoom/2; ++j)
+            {
+                TileTemplates.Add(new Tile(TileType.RoomEntrance, i));
+            }
+            TileTemplates.Add(new Tile(TileType.RoomInterior, i));
+            TileTemplates.Add(new Tile(TileType.RoomWall, i));
         }
     }
 
@@ -536,7 +539,10 @@ public class WFC_Script : MonoBehaviour
             go.transform.Rotate(new Vector3(0, 1, 0), 180);
 
         if (tile.Type == TileType.RoomEntrance || tile.Type == TileType.RoomWall || tile.Type == TileType.RoomCorner)
+        {
             go.transform.localScale=new Vector3(2, 2, 2);
+            go.transform.Rotate(new Vector3(0, 1, 0), 180);
+        }
 
         // if (tile.Type == TileType.RoomCorner)
         //     go.transform.Rotate(new Vector3(0, 1, 0), -90);
