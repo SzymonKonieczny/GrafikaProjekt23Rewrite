@@ -286,12 +286,19 @@ MonoBehaviour:
   - {fileID: 8785848329351094923, guid: acb2bcc5eb3722c4da960ebba48ad94a, type: 3}
   - {fileID: 8785848329351094923, guid: 9f735c9dea2f50d42a5c475571f746d8, type: 3}
   - {fileID: 8785848329351094923, guid: e5a9d493e92689f4087425153aa4f377, type: 3}
-  - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
-  - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
-  - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
+  - {fileID: 476404665871741772, guid: 8158ed79765a8e94ba2ae0cb22869793, type: 3}
+  - {fileID: 2575645450392585660, guid: 513e0a55e45bb4c4db29c310e8a7dbe3, type: 3}
+  - {fileID: 7909336399754893252, guid: 0927db82dd7b5f6409e8ebc8430da786, type: 3}
+  - {fileID: 7053030384993846166, guid: 4d30575deb5771141a50ecc7532cddb9, type: 3}
+  PriorityEmpty: 4
+  PriorityI: 1
+  PriorityL: 3
+  PriorityT: 3
+  PriorityX: 1
+  PriorityRoom: 14
   WCFMapListCopy: []
   TileTemplates: []
-  MapSize: {x: 3, y: 3}
+  MapSize: {x: 20, y: 20}
   GridSize: 18
 --- !u!4 &318749737
 Transform:
@@ -1112,6 +1119,67 @@ Transform:
   m_Father: {fileID: 615202512}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &6987556855003770981
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5420571389984924553, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6064652466305389050, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_Name
+      value: RoomWall
+      objectReference: {fileID: 0}
+    - target: {fileID: 6064652466305389050, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f8351b23d1a069943b8a86a22e6671e6, type: 3}
 --- !u!1001 &7040104457833953602
 PrefabInstance:
   m_ObjectHideFlags: 0

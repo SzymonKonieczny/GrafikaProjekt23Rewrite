@@ -172,6 +172,14 @@ public class WFC_Script : MonoBehaviour
     [SerializeField] Dictionary<Vector2Int, Tile> FinalWFCMap;
 
 
+    public int PriorityEmpty = 4;
+    public int PriorityI = 1;
+    public int PriorityL = 3;
+    public int PriorityT = 3;
+    public int PriorityX = 1;
+    public int PriorityRoom = 4;
+
+
     [SerializeField] List<Tile> WCFMapListCopy = new List<Tile>();
     [SerializeField] List<Tile> TileTemplates = new List<Tile>();
 
@@ -181,12 +189,7 @@ public class WFC_Script : MonoBehaviour
 
 
     private void InitTemplates() {
-        const int PriorityEmpty = 4;
-        const int PriorityI     = 1;
-        const int PriorityL     = 3;
-        const int PriorityT     = 3;
-        const int PriorityX     = 1;
-        const int PriorityRoom  = 4;
+
 
         for (int i = 0; i < 4; ++i)
         {
