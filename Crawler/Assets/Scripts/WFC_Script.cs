@@ -186,7 +186,7 @@ public class WFC_Script : MonoBehaviour
         const int PriorityL     = 3;
         const int PriorityT     = 3;
         const int PriorityX     = 1;
-        const int PriorityRoom  = 30;
+        const int PriorityRoom  = 4;
 
         for (int i = 0; i < 4; ++i)
         {
