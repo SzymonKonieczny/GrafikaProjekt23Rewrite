@@ -45,16 +45,16 @@ namespace Crawler
 
         SocketType RotateSocket(SocketType Socket, int Rotation)
         {
-            List<SocketType> Sockets = new List<SocketType>();
-            Sockets.Add(SocketType.Wall_0);
-            Sockets.Add(SocketType.Wall_1);
-            Sockets.Add(SocketType.Wall_2);
-            Sockets.Add(SocketType.Wall_3);
+            List<SocketType> NewSockets = new List<SocketType>();
+            NewSockets.Add(SocketType.Wall_0);
+            NewSockets.Add(SocketType.Wall_1);
+            NewSockets.Add(SocketType.Wall_2);
+            NewSockets.Add(SocketType.Wall_3);
 
-            if (!Sockets.Contains(Socket)) return Socket;
+            if (!NewSockets.Contains(Socket)) return Socket;
 
-            int CurrentIdx = Sockets.LastIndexOf(Socket);
-            return Sockets[(7-(CurrentIdx + Rotation)) % 4];
+            int CurrentIdx = NewSockets.LastIndexOf(Socket);
+            return NewSockets[(7-CurrentIdx + Rotation) % 4];
         }
             
         void SetRotation(int rotIdx)
@@ -122,7 +122,7 @@ namespace Crawler
             case TileType.RoomCorner:
                 Sockets.Add(SocketType.Empty_S);  // X+
                 Sockets.Add(SocketType.Empty_S);  // Z-
-                Sockets.Add(SocketType.Wall_1);   // X-
+                Sockets.Add(SocketType.Wall_3);   // X-
                 Sockets.Add(SocketType.Wall_0);   // Z+
                 break;
             case TileType.RoomInterior:
@@ -144,10 +144,9 @@ namespace Crawler
 
             for (int i = 0; i < 4; ++i)
             {
-                if (Sockets[i] == SocketType.Empty_S || Sockets[i] == SocketType.Hall_0 || Sockets[i] == SocketType.Hall_1)
+                if (Sockets[i] == SocketType.RoomInterior) continue;
+                if (Rot % 2 != 0 && (Sockets[i] == SocketType.Hall_0 || Sockets[i] == SocketType.Hall_1))
                 {
-                    if (Rot % 2 == 0) { break; }
-
                     if (Sockets[i] == SocketType.Hall_0) {
                         Sockets[i] = SocketType.Hall_1;
                     }
@@ -179,10 +178,13 @@ public class WFC_Script : MonoBehaviour
     public int PriorityX = 1;
     public int PriorityRoom = 4;
 
+    public bool WFCDelay = true;
 
-    [SerializeField] List<Tile> WCFMapListCopy = new List<Tile>();
+    public int MaxFloors = 6;
+    int PlacedFloors = 0;
+
+
     [SerializeField] List<Tile> TileTemplates = new List<Tile>();
-
 
     [SerializeField] Vector2Int MapSize = new Vector2Int(10,10);
     public float GridSize = 2;
@@ -203,16 +205,16 @@ public class WFC_Script : MonoBehaviour
                 TileTemplates.Add(new Tile(TileType.Hall_T, i));
             for (int j = 0; j < PriorityX; ++j)
                 TileTemplates.Add(new Tile(TileType.Hall_X, i));
-            for (int j = 0; j < PriorityRoom; ++j)
-            {
-                TileTemplates.Add(new Tile(TileType.RoomCorner, i));
-            }
             for (int j = 0; j < PriorityRoom/2; ++j)
             {
+                TileTemplates.Add(new Tile(TileType.RoomInterior, i));
+                TileTemplates.Add(new Tile(TileType.RoomCorner, i));
+            }
+            for (int j = 0; j < PriorityRoom/4; ++j)
+            {
+                TileTemplates.Add(new Tile(TileType.RoomWall, i));
                 TileTemplates.Add(new Tile(TileType.RoomEntrance, i));
             }
-            TileTemplates.Add(new Tile(TileType.RoomInterior, i));
-            TileTemplates.Add(new Tile(TileType.RoomWall, i));
         }
     }
 
@@ -225,6 +227,14 @@ public class WFC_Script : MonoBehaviour
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
+                if ((x == 0 || y == 0 || x == width-1 || y == height-1) && false)
+                {
+                    Map.Add(new Vector2Int(x, y), new List<Tile>(EmptyCell));
+                    Tile t = new Tile(TileType.Empty, 0);
+                    t.Position = new Vector2Int(x, y);
+                    PlaceRoom(t);
+                    continue;
+                }
                 Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
             }
         }
@@ -263,13 +273,14 @@ public class WFC_Script : MonoBehaviour
     private Vector2Int Iteration()
     {
         Tile SelectedTile;
-        Vector2Int MinEntropyIdx = GetMinEntropyIdx();
-        List<Tile> MinEntropyCell = WFCMap[GetMinEntropyIdx()];
+        Vector2Int MinEntropyIdx;
+        List<Tile> MinEntropyCell;
+        MinEntropyIdx = GetMinEntropyIdx();
+        MinEntropyCell = WFCMap[GetMinEntropyIdx()];
         SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
 
         SelectedTile.Position = MinEntropyIdx;
         FinalWFCMap.Add(MinEntropyIdx, SelectedTile);
-        WCFMapListCopy.Add(SelectedTile);
         PlaceRoom(SelectedTile);
 
         WFCMap[MinEntropyIdx] = new List<Tile>();
@@ -501,9 +512,18 @@ public class WFC_Script : MonoBehaviour
     {
         InitMap(MapSize.x, MapSize.y);
 
+        Vector2Int p = new Vector2Int(3, 3);
+        WFCMap[p] = new List<Tile>();
+        WFCMap[p].Add(new Tile(TileType.RoomInterior, 0));
+        Spread(p);
+        p = new Vector2Int(8, 8);
+        WFCMap[p] = new List<Tile>();
+        WFCMap[p].Add(new Tile(TileType.RoomInterior, 0));
+        Spread(p);
+
         do {
             Spread(Iteration());
-            yield return new WaitForSeconds(0.125f);
+            yield return new WaitForSeconds(WFCDelay ? 0.075f : 0f);
         } while(Continue());
 
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
@@ -516,7 +536,16 @@ public class WFC_Script : MonoBehaviour
                     Cell.Key.x,
                     Cell.Key.y
                 ));
-                continue;
+                foreach(var go in PlacedRooms)
+                {
+                    Destroy(go.Value);
+                }
+                PlacedRooms.Clear();
+                FinalWFCMap.Clear();
+                WFCMap.Clear();
+                StartCoroutine(GenerateWFCMap());
+                yield return new WaitForSeconds(WFCDelay ? 0.075f : 0f);
+                break;
             }
             Tile MapTile = Cell.Value[0];
             MapTile.Position = Cell.Key;
@@ -529,6 +558,7 @@ public class WFC_Script : MonoBehaviour
     
     private void PlaceRoom(Tile tile)
     {
+        if (tile.Type == TileType.RoomInterior) PlacedFloors += 1;
         GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
         go.transform.position = new Vector3(tile.Position.x*GridSize, 0, tile.Position.y*GridSize);
         go.transform.rotation = tile.Rotation;
@@ -549,15 +579,6 @@ public class WFC_Script : MonoBehaviour
       
         PlacedRooms.Add(tile.Position, go);
     }
-
-    void SpawnMap()
-    {
-        foreach(KeyValuePair<Vector2Int, Tile> Cell in FinalWFCMap)
-        {
-            PlaceRoom(Cell.Value);
-        }
-    }
-
 
 
     void Start()
