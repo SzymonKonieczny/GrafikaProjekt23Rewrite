@@ -34,7 +34,7 @@ namespace Crawler
     }
 
     [System.Serializable]
-    struct Tile 
+    struct _Tile 
     {
         public Vector2Int Position;
         public TileType Type;
@@ -66,7 +66,7 @@ namespace Crawler
             Rotation = Quaternion.Euler(Rot);
         }
 
-        public Tile(TileType type, int Rot)
+        public _Tile(TileType type, int Rot)
         {
             Position = new Vector2Int();
             Rotation = new Quaternion();
@@ -163,7 +163,7 @@ namespace Crawler
     }
 }
 
-public class WFC_Script : MonoBehaviour
+public class _WFC_Script : MonoBehaviour
 {
     [SerializeField] List<GameObject> RoomPrefabs = new List<GameObject>();
     [SerializeField] Dictionary<Vector2Int, GameObject> PlacedRooms = new Dictionary<Vector2Int, GameObject>();
