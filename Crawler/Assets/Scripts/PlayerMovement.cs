@@ -1,9 +1,31 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Look : MonoBehaviour
+
+public class PlayerMovement : MonoBehaviour
 {
-    #region Variables
+    public CharacterController controller;
+
+    public Camera cam;
+    public float speed = 10;
+    public float SprintMultiplier = 2;
+    float SprintMultiplier_with_check = 1;
+    public float Gravity = -1.81f;
+    public Transform GroundCheck;
+    public float GroundDistancs = 0.5f;
+    public LayerMask groundMask;
+    public int maxHP;
+
+
+
+    int HP;
+    bool isGrounded;
+    float x;
+    Vector3 velocity;
+    float z;
+    Vector3 move;
+
+
     public Transform Player;
     public Transform cams;
     public Transform weapon;
@@ -13,22 +35,50 @@ public class Look : MonoBehaviour
     public static bool CursorLocked = true;
     bool cursorlockcooldown;
     [SerializeField] LayerMask RayMask;
-    [SerializeField] Camera camera;
+   // [SerializeField] Camera camera;
     public Transform Hand;
     Quaternion camcenter;
-    #endregion
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
     void Update()
     {
+        DoMove();
+        DoLook();
+    }
+    void DoMove()
+    {
+        isGrounded = Physics.CheckSphere(GroundCheck.position, GroundDistancs, groundMask);
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = 0f;
+        }
 
+
+        x = Input.GetAxisRaw("Horizontal");
+        z = Input.GetAxisRaw("Vertical");
+        move = transform.right * x + transform.forward * z;
+
+
+        controller.Move(move * speed * SprintMultiplier_with_check * Time.deltaTime);
+
+        if (isGrounded && Input.GetKey(KeyCode.Space)) velocity.y = 5f;
+
+        velocity.y += Gravity * Time.deltaTime;
+
+        controller.Move(velocity * Time.deltaTime);
+    }
+    void DoLook()
+    {
         setY();
         setX();
         if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape)) StartCoroutine(UpdateCursorLock());
         InteractionRay();
-
-    }
-    public void UpdateCursorLockFromAnOutsideScript()
-    {
-        StartCoroutine(UpdateCursorLock());
     }
     void setY()
     {
@@ -73,7 +123,7 @@ public class Look : MonoBehaviour
     public void AttatchToHand(Transform ToHold)
     {
         if (Hand.transform.childCount > 0) DropHeldItem(ToHold.position);
-        if(ToHold.TryGetComponent(out Rigidbody rb))
+        if (ToHold.TryGetComponent(out Rigidbody rb))
         {
             rb.isKinematic = true;
         }
@@ -108,12 +158,12 @@ public class Look : MonoBehaviour
         {
             if (Physics.Raycast(cams.transform.position, cams.transform.forward, out hit, 100))
             {
-               bool isInteractive = hit.transform.gameObject.TryGetComponent ( out IInteractible LookingAt);
+                bool isInteractive = hit.transform.gameObject.TryGetComponent(out IInteractible LookingAt);
 
                 if (isInteractive)
                 {
 
-                  //  LookingAt.Interact(this);
+                    LookingAt.Interact(this);
                     Debug.Log("Interacting");
                     AlreadyInteracted = true;
                 }
@@ -122,9 +172,9 @@ public class Look : MonoBehaviour
                     DropHeldItem(hit.point);
                 }
             }
-           
+
         }
-            //if (!AlreadyInteracted)DropHeldItem(transform);
+        //if (!AlreadyInteracted)DropHeldItem(transform);
 
     }
 }

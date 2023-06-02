@@ -16,7 +16,7 @@ public class TestInteraction : MonoBehaviour, IInteractible
     {
         
     }
-    public void Interact(Look Look, MovementScript movement)
+    public void Interact(PlayerMovement player)
    {
         rb.velocity = new Vector3(0, 5, 0);
    }

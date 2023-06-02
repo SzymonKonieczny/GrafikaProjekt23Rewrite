@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class InteractionTestPickUpScript : MonoBehaviour, IInteractible
 {
-    public void Interact(Look Look, MovementScript movement)
+    public void Interact(PlayerMovement player)
     {
 
-        Look.AttatchToHand(transform);
+        player.AttatchToHand(transform);
        
     }
 

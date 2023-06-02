@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface IRoomPlacer
 {
-    List<Transform> GetRoomTransforms();
+    public List<Transform> GetRoomTransforms();
+    public IEnumerator GenerateMap();
 }

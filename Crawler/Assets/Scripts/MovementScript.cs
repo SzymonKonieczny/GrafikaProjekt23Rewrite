@@ -47,11 +47,6 @@ public class MovementScript : MonoBehaviour
         move = transform.right * x + transform.forward * z;
         
 
-
-      
-      
-
-
         controller.Move(move * speed * SprintMultiplier_with_check * Time.deltaTime);
 
         if (isGrounded && Input.GetKey(KeyCode.Space)) velocity.y = 5f;

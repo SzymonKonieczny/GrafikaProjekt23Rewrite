@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IInteractible
 {
-    public void Interact(Look Look, MovementScript movement);
+    public void Interact(PlayerMovement player);
 
 }

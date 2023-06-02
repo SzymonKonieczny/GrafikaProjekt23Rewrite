@@ -296,9 +296,11 @@ MonoBehaviour:
   PriorityT: 3
   PriorityX: 1
   PriorityRoom: 14
-  WCFMapListCopy: []
+  WFCDelay: 1
+  MaxFloors: 6
   TileTemplates: []
-  MapSize: {x: 20, y: 20}
+  RoomList: []
+  MapSize: {x: 10, y: 10}
   GridSize: 18
 --- !u!4 &318749737
 Transform:
@@ -794,6 +796,7 @@ GameObject:
   - component: {fileID: 1255876639}
   - component: {fileID: 1255876642}
   - component: {fileID: 1255876643}
+  - component: {fileID: 1255876644}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -826,7 +829,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255876638}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45b457f5683cb9543974237625c311e4, type: 3}
   m_Name: 
@@ -866,7 +869,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255876638}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8f4dccc9052633438f53cd1223b46cb, type: 3}
   m_Name: 
@@ -896,6 +899,39 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1255876644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255876638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0557a1779cdbecb4b8d27670eaddeb66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 1255876639}
+  cam: {fileID: 792379051}
+  speed: 10
+  SprintMultiplier: 2
+  Gravity: -1.81
+  GroundCheck: {fileID: 687797672}
+  GroundDistancs: 0.5
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 128
+  maxHP: 0
+  Player: {fileID: 1255876641}
+  cams: {fileID: 792379052}
+  weapon: {fileID: 0}
+  xsens: 500
+  ysens: 200
+  maxAngle: 181.44
+  RayMask:
+    serializedVersion: 2
+    m_Bits: 256
+  Hand: {fileID: 913246454}
 --- !u!1 &1813150368
 GameObject:
   m_ObjectHideFlags: 0
@@ -1113,7 +1149,7 @@ Transform:
   m_GameObject: {fileID: 2100744998}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 400, y: 1, z: 400}
+  m_LocalScale: {x: 3138.76, y: 1, z: 2880.76}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 615202512}

@@ -163,12 +163,12 @@ namespace Crawler
     }
 }
 
-public class WFC_Script : MonoBehaviour
+public class WFC_Script : MonoBehaviour, IRoomPlacer
 {
     [SerializeField] List<GameObject> RoomPrefabs = new List<GameObject>();
     [SerializeField] Dictionary<Vector2Int, GameObject> PlacedRooms = new Dictionary<Vector2Int, GameObject>();
     [SerializeField] Dictionary<Vector2Int, List<Tile>> WFCMap;
-    [SerializeField] Dictionary<Vector2Int, Tile> FinalWFCMap;
+    [SerializeField] Dictionary<Vector2Int, Tile> FinalWFCMap = new Dictionary<Vector2Int, Tile>();
 
 
     public int PriorityEmpty = 4;
@@ -184,12 +184,16 @@ public class WFC_Script : MonoBehaviour
     int PlacedFloors = 0;
 
 
-    [SerializeField] List<Tile> TileTemplates = new List<Tile>();
 
+    [SerializeField] List<Tile> TileTemplates = new List<Tile>();
+    [SerializeField] List<Transform> RoomList = new List<Transform>();
     [SerializeField] Vector2Int MapSize = new Vector2Int(10,10);
     public float GridSize = 2;
 
-
+    public List<Transform> GetRoomTransforms()
+    {
+        return RoomList;
+    }
     private void InitTemplates() {
 
 
@@ -510,6 +514,7 @@ public class WFC_Script : MonoBehaviour
 
     public IEnumerator GenerateWFCMap()
     {
+        RoomList.Clear();
         InitMap(MapSize.x, MapSize.y);
 
         Vector2Int p = new Vector2Int(3, 3);
@@ -574,9 +579,9 @@ public class WFC_Script : MonoBehaviour
             go.transform.Rotate(new Vector3(0, 1, 0), 180);
         }
 
-        // if (tile.Type == TileType.RoomCorner)
-        //     go.transform.Rotate(new Vector3(0, 1, 0), -90);
-      
+
+        if (tile.Type == TileType.RoomInterior)
+            RoomList.Add(go.transform);
         PlacedRooms.Add(tile.Position, go);
     }
 
@@ -586,10 +591,12 @@ public class WFC_Script : MonoBehaviour
         PlacedRooms = new Dictionary<Vector2Int, GameObject>();
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
 
-        StartCoroutine(GenerateWFCMap());
+        //StartCoroutine(GenerateWFCMap());
         // SpawnMap();
     }
 
-
-    
+    public IEnumerator GenerateMap()
+    {
+       yield return GenerateWFCMap();
+    }
 }
