@@ -149,7 +149,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 318749735}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5201e525a2cd3d4a8ffffe51d735cfd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8bd1b8801c1ed37ad8fee8456157bee4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   RoomPrefabs:
@@ -158,21 +158,14 @@ MonoBehaviour:
   - {fileID: 8785848329351094923, guid: acb2bcc5eb3722c4da960ebba48ad94a, type: 3}
   - {fileID: 8785848329351094923, guid: 9f735c9dea2f50d42a5c475571f746d8, type: 3}
   - {fileID: 8785848329351094923, guid: e5a9d493e92689f4087425153aa4f377, type: 3}
-  - {fileID: 919132149155446097, guid: 5c9c671477001c54386da364e2572766, type: 3}
-  - {fileID: 919132149155446097, guid: 9322f48588a13c34dbd77acd7600b9df, type: 3}
-  - {fileID: 919132149155446097, guid: a3e337116fbc92140b52f9f63dd7c56e, type: 3}
+  - {fileID: 476404665871741772, guid: 8158ed79765a8e94ba2ae0cb22869793, type: 3}
+  - {fileID: 2575645450392585660, guid: 513e0a55e45bb4c4db29c310e8a7dbe3, type: 3}
+  - {fileID: 7909336399754893252, guid: 0927db82dd7b5f6409e8ebc8430da786, type: 3}
   - {fileID: 7053030384993846166, guid: 4d30575deb5771141a50ecc7532cddb9, type: 3}
-  PriorityEmpty: 4
-  PriorityI: 1
-  PriorityL: 3
-  PriorityT: 3
-  PriorityX: 1
-  PriorityRoom: 10
-  WFCDelay: 0
-  MaxFloors: 6
-  TileTemplates: []
   MapSize: {x: 10, y: 10}
   GridSize: 18
+  WFCDelay: 1
+  PlacedFloors: 0
 --- !u!4 &318749737
 Transform:
   m_ObjectHideFlags: 0

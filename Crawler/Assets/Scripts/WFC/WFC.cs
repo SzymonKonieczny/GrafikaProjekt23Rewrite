@@ -5,165 +5,78 @@ using System.Collections.Generic;
 using UnityEngine;
 using Crawler;
 
-namespace Crawler
-{
-    enum TileType
-    {
+namespace Crawler {
+    enum TileType {
         Empty,
         Hall_I,
         Hall_L,
         Hall_T,
         Hall_X,
-        RoomEntrance,
-        RoomWall,
-        RoomCorner,
-        RoomInterior,
+        Room_T,
+        Room_I,
+        Room_L,
+        Room_Floor
     }
 
-    [System.Serializable]
-    enum SocketType
-    {
-        Empty_S,
-        Hall_0,
-        Hall_1,
-        Wall_0,
-        Wall_1,
-        Wall_2,
-        Wall_3,
-        RoomInterior,
-    }
-
-    [System.Serializable]
-    struct _Tile 
-    {
-        public Vector2Int Position;
-        public TileType Type;
+    struct Tile {
+        public Vector3 Position;
         public Quaternion Rotation;
-        public int RotationInt;
+        public TileType Type;
 
-        public List<SocketType> Sockets;
-
-        SocketType RotateSocket(SocketType Socket, int Rotation)
+        public void SetRotation(int Rotation)
         {
-            List<SocketType> NewSockets = new List<SocketType>();
-            NewSockets.Add(SocketType.Wall_0);
-            NewSockets.Add(SocketType.Wall_1);
-            NewSockets.Add(SocketType.Wall_2);
-            NewSockets.Add(SocketType.Wall_3);
-
-            if (!NewSockets.Contains(Socket)) return Socket;
-
-            int CurrentIdx = NewSockets.LastIndexOf(Socket);
-            return NewSockets[(7-CurrentIdx + Rotation) % 4];
+            this.Rotation = Quaternion.Euler(new Vector3(0, (Rotation%4)*90, 0));
         }
-            
-        void SetRotation(int rotIdx)
+        public void SetPosition(float x, float z)
         {
-            SetRotationVec3(new Vector3(0, -(rotIdx%4) * 90, 0));
+            this.Position = new Vector3(x, 0, z);
         }
-        void SetRotationVec3(Vector3 Rot)
+        public void SetPosition(float x, float y, float z)
         {
-            Rotation = Quaternion.Euler(Rot);
+            this.Position = new Vector3(x, y, z);
+        }
+        public void SetPosition(Vector3 pos)
+        {
+            this.Position = pos;
         }
 
-        public _Tile(TileType type, int Rot)
+        public Vector3 GetPositionScaled(float GridSize)
         {
-            Position = new Vector2Int();
-            Rotation = new Quaternion();
-            Sockets = new List<SocketType>();
-            Type = type;
-            RotationInt = Rot;
-            SetRotation(Rot);
-
-            switch(type)
-            {
-            case TileType.Empty:
-                Sockets.Add(SocketType.Empty_S); // X+
-                Sockets.Add(SocketType.Empty_S); // Z-
-                Sockets.Add(SocketType.Empty_S); // X-
-                Sockets.Add(SocketType.Empty_S); // Z+
-                break;
-            case TileType.Hall_I:
-                Sockets.Add(SocketType.Empty_S); // X+
-                Sockets.Add(SocketType.Hall_0);  // Z-
-                Sockets.Add(SocketType.Empty_S); // X-
-                Sockets.Add(SocketType.Hall_0);  // Z+
-                break;
-            case TileType.Hall_L:
-                Sockets.Add(SocketType.Empty_S); // X+
-                Sockets.Add(SocketType.Empty_S); // Z-
-                Sockets.Add(SocketType.Hall_1);  // X-
-                Sockets.Add(SocketType.Hall_0);  // Z+
-                break;
-            case TileType.Hall_T:
-                Sockets.Add(SocketType.Hall_1);  // X+
-                Sockets.Add(SocketType.Hall_0);  // Z-
-                Sockets.Add(SocketType.Empty_S); // X-
-                Sockets.Add(SocketType.Hall_0);  // Z+
-                break;
-            case TileType.Hall_X:
-                Sockets.Add(SocketType.Hall_1);  // X+
-                Sockets.Add(SocketType.Hall_0);  // Z-
-                Sockets.Add(SocketType.Hall_1);  // X-
-                Sockets.Add(SocketType.Hall_0);  // Z+
-                break;
-            case TileType.RoomEntrance:
-                Sockets.Add(SocketType.Hall_1);        // X-
-                Sockets.Add(SocketType.Wall_0);        // Z-
-                Sockets.Add(SocketType.RoomInterior);  // X+
-                Sockets.Add(SocketType.Wall_0);        // Z+
-                break;
-            case TileType.RoomWall:
-                Sockets.Add(SocketType.Wall_3);        // X+
-                Sockets.Add(SocketType.RoomInterior);  // Z-
-                Sockets.Add(SocketType.Wall_3);        // X-
-                Sockets.Add(SocketType.Empty_S);       // Z+
-                break;
-            case TileType.RoomCorner:
-                Sockets.Add(SocketType.Empty_S);  // X+
-                Sockets.Add(SocketType.Empty_S);  // Z-
-                Sockets.Add(SocketType.Wall_3);   // X-
-                Sockets.Add(SocketType.Wall_0);   // Z+
-                break;
-            case TileType.RoomInterior:
-                Sockets.Add(SocketType.RoomInterior);  // X+
-                Sockets.Add(SocketType.RoomInterior);  // Z-
-                Sockets.Add(SocketType.RoomInterior);  // X-
-                Sockets.Add(SocketType.RoomInterior);  // Z+
-                break;
-            default:
-                throw new System.Exception(string.Format("{0} NOT IMPLEMENTED YET", type.ToString()));
-            }
-
-            List<SocketType> DefaultSockets = new List<SocketType>(Sockets);
-            
-            Sockets[0] = DefaultSockets[(4-Rot)%4];
-            Sockets[3] = DefaultSockets[(7-Rot)%4];
-            Sockets[2] = DefaultSockets[(6-Rot)%4];
-            Sockets[1] = DefaultSockets[(5-Rot)%4];
-
-            for (int i = 0; i < 4; ++i)
-            {
-                if (Sockets[i] == SocketType.RoomInterior) continue;
-                if (Rot % 2 != 0 && (Sockets[i] == SocketType.Hall_0 || Sockets[i] == SocketType.Hall_1))
-                {
-                    if (Sockets[i] == SocketType.Hall_0) {
-                        Sockets[i] = SocketType.Hall_1;
-                    }
-                    else if (Sockets[i] == SocketType.Hall_1) {
-                        Sockets[i] = SocketType.Hall_0;
-                    }
-                }
-                else
-                {
-                    Sockets[i] = RotateSocket(Sockets[i], Rot);
-                }
-            }
+            return this.Position * GridSize;
         }
-    }
+        public Vector2Int GetPositionVec2()
+        {
+            Vector2Int ret = new Vector2Int((int)this.Position.x, (int)this.Position.z);
+            return ret;
+        }
+
+        public Tile(TileType t, int r)
+        {
+            this.Type = t;
+            this.Position = new Vector3(0, 0, 0);
+            this.Rotation = new Quaternion();
+            this.SetRotation(r);
+        }
+        public Tile(TileType t, int r, Vector2 p)
+        {
+            this.Type = t;
+            this.Position.x = p.x;
+            this.Position.z = p.y;
+            this.Position.y = 0;
+            this.Rotation = new Quaternion();
+            this.SetRotation(r);
+        }
+        public Tile(TileType t, int r, Vector3 p)
+        {
+            this.Type = t;
+            this.Position = p;
+            this.Rotation = new Quaternion();
+            this.SetRotation(r);
+        }
+    };
 }
 
-public class _WFC_Script : MonoBehaviour
+public class WFC : MonoBehaviour, IRoomPlacer
 {
     [SerializeField] List<GameObject> RoomPrefabs = new List<GameObject>();
     [SerializeField] Dictionary<Vector2Int, GameObject> PlacedRooms = new Dictionary<Vector2Int, GameObject>();
@@ -171,70 +84,28 @@ public class _WFC_Script : MonoBehaviour
     [SerializeField] Dictionary<Vector2Int, Tile> FinalWFCMap;
 
 
-    public int PriorityEmpty = 4;
-    public int PriorityI = 1;
-    public int PriorityL = 3;
-    public int PriorityT = 3;
-    public int PriorityX = 1;
-    public int PriorityRoom = 4;
-
+    [SerializeField] List<Tile> TileTemplates = new List<Tile>();
+    [SerializeField] Vector2Int MapSize = new Vector2Int(15, 15);
+    public float GridSize = 18;
     public bool WFCDelay = true;
 
-    public int MaxFloors = 6;
-    int PlacedFloors = 0;
+    public int PlacedFloors = 0;
 
-
-    [SerializeField] List<Tile> TileTemplates = new List<Tile>();
-
-    [SerializeField] Vector2Int MapSize = new Vector2Int(10,10);
-    public float GridSize = 2;
-
+    public List<Transform> GetRoomTransforms() {
+        Debug.LogError("TODO: GetRoomTransforms()");
+        return new List<Transform>();
+    }
 
     private void InitTemplates() {
-
-
-        for (int i = 0; i < 4; ++i)
-        {
-            for (int j = 0; j < PriorityEmpty; ++j)
-                TileTemplates.Add(new Tile(TileType.Empty, i));
-            for (int j = 0; j < PriorityI; ++j)
-                TileTemplates.Add(new Tile(TileType.Hall_I, i));
-            for (int j = 0; j < PriorityL; ++j)
-                TileTemplates.Add(new Tile(TileType.Hall_L, i));
-            for (int j = 0; j < PriorityT; ++j)
-                TileTemplates.Add(new Tile(TileType.Hall_T, i));
-            for (int j = 0; j < PriorityX; ++j)
-                TileTemplates.Add(new Tile(TileType.Hall_X, i));
-            for (int j = 0; j < PriorityRoom/2; ++j)
-            {
-                TileTemplates.Add(new Tile(TileType.RoomInterior, i));
-                TileTemplates.Add(new Tile(TileType.RoomCorner, i));
-            }
-            for (int j = 0; j < PriorityRoom/4; ++j)
-            {
-                TileTemplates.Add(new Tile(TileType.RoomWall, i));
-                TileTemplates.Add(new Tile(TileType.RoomEntrance, i));
-            }
-        }
     }
 
     private void InitMap(int width, int height)
     {
         InitTemplates();
         Dictionary<Vector2Int, List<Tile>> Map = new Dictionary<Vector2Int, List<Tile>>();
-        List<Tile> EmptyCell = new List<Tile>();
-        EmptyCell.Add(new Tile(TileType.Empty, 0));
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                if ((x == 0 || y == 0 || x == width-1 || y == height-1) && false)
-                {
-                    Map.Add(new Vector2Int(x, y), new List<Tile>(EmptyCell));
-                    Tile t = new Tile(TileType.Empty, 0);
-                    t.Position = new Vector2Int(x, y);
-                    PlaceRoom(t);
-                    continue;
-                }
                 Map.Add(new Vector2Int(x, y), new List<Tile>(TileTemplates));
             }
         }
@@ -253,7 +124,7 @@ public class _WFC_Script : MonoBehaviour
 
     private Vector2Int GetMinEntropyIdx()
     {
-        Vector2Int CurrIdx = new Vector2Int(1, 1);
+        Vector2Int CurrIdx = new Vector2Int(0, 0);
         int CurrMin = TileTemplates.Count;
         int Entropy = 0;
 
@@ -278,8 +149,6 @@ public class _WFC_Script : MonoBehaviour
         MinEntropyIdx = GetMinEntropyIdx();
         MinEntropyCell = WFCMap[GetMinEntropyIdx()];
         SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
-
-        SelectedTile.Position = MinEntropyIdx;
         FinalWFCMap.Add(MinEntropyIdx, SelectedTile);
         PlaceRoom(SelectedTile);
 
@@ -295,231 +164,20 @@ public class _WFC_Script : MonoBehaviour
         {
             return;
         }
-
-        List<Tile> CellToCompare = new List<Tile>();
-        List<SocketType> AvailableSockets = new List<SocketType>();
-        bool Changed = false;
-        int PrevSize = 0;
-        Vector2Int CompareIdx = new Vector2Int(0, 0);
-        int x = IdxToCheck.x, z = IdxToCheck.y;
-
-        // 1. go to each direction from Idx
-        CompareIdx = new Vector2Int(x+1, z);
-        if (WFCMap.ContainsKey(CompareIdx))
-        {
-            CellToCompare = WFCMap[CompareIdx];
-            // 2. check adjacent sockets
-            foreach (Tile tile in WFCMap[IdxToCheck])
-            {
-                AvailableSockets.Add(tile.Sockets[0]);
-            }
-
-            // 3. if sockets dont match, remove tiles 
-            PrevSize = WFCMap[CompareIdx].Count;
-            // TODO: Check if it works correctly!!!
-            WFCMap[CompareIdx].RemoveAll((t) => {
-                return !AvailableSockets.Contains(t.Sockets[2]);
-            });
-
-            // 4. if removal was done, call Spread() on this Idx
-            if (WFCMap[CompareIdx].Count != PrevSize)
-            {
-                Spread(CompareIdx);
-            }
-            AvailableSockets.Clear();
-        }
-
-        CompareIdx = new Vector2Int(x, z-1);
-        if (WFCMap.ContainsKey(CompareIdx))
-        {
-            CellToCompare = WFCMap[CompareIdx];
-            // 2. check adjacent sockets
-            foreach (Tile tile in WFCMap[IdxToCheck])
-            {
-                AvailableSockets.Add(tile.Sockets[1]);
-            }
-
-            // 3. if sockets dont match, remove tiles 
-            PrevSize = WFCMap[CompareIdx].Count;
-            // TODO: Check if it works correctly!!!
-            WFCMap[CompareIdx].RemoveAll((t) => {
-                return !AvailableSockets.Contains(t.Sockets[3]);
-            });
-
-            // 4. if removal was done, call Spread() on this Idx
-            if (WFCMap[CompareIdx].Count != PrevSize)
-            {
-                Spread(CompareIdx);
-            }
-            AvailableSockets.Clear();
-        }
-
-        CompareIdx = new Vector2Int(x-1, z);
-        if (WFCMap.ContainsKey(CompareIdx))
-        {
-            CellToCompare = WFCMap[CompareIdx];
-            // 2. check adjacent sockets
-            foreach (Tile tile in WFCMap[IdxToCheck])
-            {
-                AvailableSockets.Add(tile.Sockets[2]);
-            }
-
-            // 3. if sockets dont match, remove tiles 
-            PrevSize = WFCMap[CompareIdx].Count;
-            // TODO: Check if it works correctly!!!
-            WFCMap[CompareIdx].RemoveAll((t) => {
-                return !AvailableSockets.Contains(t.Sockets[0]);
-            });
-
-            // 4. if removal was done, call Spread() on this Idx
-            if (WFCMap[CompareIdx].Count != PrevSize)
-            {
-                Spread(CompareIdx);
-            }
-            AvailableSockets.Clear();
-        }
-
-        CompareIdx = new Vector2Int(x, z+1);
-        if (WFCMap.ContainsKey(CompareIdx))
-        {
-            CellToCompare = WFCMap[CompareIdx];
-            // 2. check adjacent sockets
-            foreach (Tile tile in WFCMap[IdxToCheck])
-            {
-                AvailableSockets.Add(tile.Sockets[3]);
-            }
-
-            // 3. if sockets dont match, remove tiles 
-            PrevSize = WFCMap[CompareIdx].Count;
-            // TODO: Check if it works correctly!!!
-            WFCMap[CompareIdx].RemoveAll((t) => {
-                return !AvailableSockets.Contains(t.Sockets[1]);
-            });
-
-            // 4. if removal was done, call Spread() on this Idx
-            if (WFCMap[CompareIdx].Count != PrevSize)
-            {
-                Spread(CompareIdx);
-            }
-            AvailableSockets.Clear();
-        }
-    }
-
-    private bool SpreadOld()
-    {
-        List<Tile> CellToCompare = new List<Tile>();
-        List<SocketType> AdjacentSockets= new List<SocketType>();
-        bool Changed = false;
-        int PrevSize = 0;
-        Vector2Int CompareCoords = new Vector2Int(0, 0);
-        int x = 0, y = 0;
-
-        foreach(KeyValuePair<Vector2Int, List<Tile>> Cell in WFCMap)
-        {
-            if (Cell.Value.Count == 1) { continue; }
-
-            x = Cell.Key.x;
-            y = Cell.Key.y;
-
-            CompareCoords = new Vector2Int(x, y-1);
-            if (WFCMap.ContainsKey(CompareCoords)) {
-                CellToCompare = WFCMap[CompareCoords];
-                foreach (Tile tile in CellToCompare)
-                {
-                    AdjacentSockets.Add(tile.Sockets[0]);
-                }
-                PrevSize = Cell.Value.Count;
-                for (int i = 0; i < Cell.Value.Count; ++i) {
-					bool IsCompatible = false;
-					for (int j = 0; j < AdjacentSockets.Count; ++j) {
-						IsCompatible |= Cell.Value[i].Sockets[2] == AdjacentSockets[j];
-					}
-					if (!IsCompatible) {
-                        Cell.Value.RemoveAt(i--);
-					}
-				}
-				Changed |= PrevSize != Cell.Value.Count;            		// this is for checking if any change was made
-				AdjacentSockets.Clear();							        // clear adjacent sockets list
-            }
-
-            CompareCoords = new Vector2Int(x-1, y);
-            if (WFCMap.ContainsKey(new Vector2Int(x-1, y))) {
-                CellToCompare = WFCMap[CompareCoords];
-                foreach (Tile tile in CellToCompare)
-                {
-                    AdjacentSockets.Add(tile.Sockets[1]);
-                }
-                PrevSize = Cell.Value.Count;
-                for (int i = 0; i < Cell.Value.Count; ++i) {
-					bool IsCompatible = false;
-					for (int j = 0; j < AdjacentSockets.Count; ++j) {
-						IsCompatible |= Cell.Value[i].Sockets[3] == AdjacentSockets[j];
-					}
-					if (!IsCompatible) {
-                        Cell.Value.RemoveAt(i--);
-					}
-				}
-				Changed |= PrevSize != Cell.Value.Count;            		// this is for checking if any change was made
-				AdjacentSockets.Clear();							        // clear adjacent sockets list
-            }
-
-            CompareCoords = new Vector2Int(x, y+1);
-            if (WFCMap.ContainsKey(new Vector2Int(x, y+1))) {
-                CellToCompare = WFCMap[CompareCoords];
-                foreach (Tile tile in CellToCompare)
-                {
-                    AdjacentSockets.Add(tile.Sockets[2]);
-                }
-                PrevSize = Cell.Value.Count;
-                for (int i = 0; i < Cell.Value.Count; ++i) {
-					bool IsCompatible = false;
-					for (int j = 0; j < AdjacentSockets.Count; ++j) {
-						IsCompatible |= Cell.Value[i].Sockets[0] == AdjacentSockets[j];
-					}
-					if (!IsCompatible) {
-                        Cell.Value.RemoveAt(i--);
-					}
-				}
-				Changed |= PrevSize != Cell.Value.Count;            		// this is for checking if any change was made
-				AdjacentSockets.Clear();							        // clear adjacent sockets list
-            }
-
-            CompareCoords = new Vector2Int(x+1, y);
-            if (WFCMap.ContainsKey(new Vector2Int(x+1, y))) {
-                CellToCompare = WFCMap[CompareCoords];
-                foreach (Tile tile in CellToCompare)
-                {
-                    AdjacentSockets.Add(tile.Sockets[3]);
-                }
-                PrevSize = Cell.Value.Count;
-                for (int i = 0; i < Cell.Value.Count; ++i) {
-					bool IsCompatible = false;
-					for (int j = 0; j < AdjacentSockets.Count; ++j) {
-						IsCompatible |= Cell.Value[i].Sockets[1] == AdjacentSockets[j];
-					}
-					if (!IsCompatible) {
-                        Cell.Value.RemoveAt(i--);
-					}
-				}
-				Changed |= PrevSize != Cell.Value.Count;            		// this is for checking if any change was made
-				AdjacentSockets.Clear();							        // clear adjacent sockets list
-            }
-        }
-        return Changed;
     }
 
     public IEnumerator GenerateWFCMap()
     {
         InitMap(MapSize.x, MapSize.y);
 
-        Vector2Int p = new Vector2Int(3, 3);
-        WFCMap[p] = new List<Tile>();
-        WFCMap[p].Add(new Tile(TileType.RoomInterior, 0));
-        Spread(p);
-        p = new Vector2Int(8, 8);
-        WFCMap[p] = new List<Tile>();
-        WFCMap[p].Add(new Tile(TileType.RoomInterior, 0));
-        Spread(p);
+        // Vector2Int p = new Vector2Int(3, 3);
+        // WFCMap[p] = new List<Tile>();
+        // WFCMap[p].Add(new Tile(TileType.RoomInterior, 0));
+        // Spread(p);
+        // p = new Vector2Int(8, 8);
+        // WFCMap[p] = new List<Tile>();
+        // WFCMap[p].Add(new Tile(TileType.RoomInterior, 0));
+        // Spread(p);
 
         do {
             Spread(Iteration());
@@ -548,7 +206,6 @@ public class _WFC_Script : MonoBehaviour
                 break;
             }
             Tile MapTile = Cell.Value[0];
-            MapTile.Position = Cell.Key;
             FinalWFCMap.Add(Cell.Key, MapTile);
         }
 
@@ -558,26 +215,17 @@ public class _WFC_Script : MonoBehaviour
     
     private void PlaceRoom(Tile tile)
     {
-        if (tile.Type == TileType.RoomInterior) PlacedFloors += 1;
+        if (tile.Type == TileType.Room_Floor) PlacedFloors += 1;
         GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
-        go.transform.position = new Vector3(tile.Position.x*GridSize, 0, tile.Position.y*GridSize);
+        go.transform.position = tile.GetPositionScaled(GridSize);
         go.transform.rotation = tile.Rotation;
 
-        // if(tile.Type != TileType.Empty || tile.Type != TileType.Hall_I)
-        //     go.transform.Rotate(new Vector3(0, 1, 0), 180);
-        if (tile.Type != TileType.Hall_I && tile.RotationInt%2 == 0)
-            go.transform.Rotate(new Vector3(0, 1, 0), 180);
-
-        if (tile.Type == TileType.RoomEntrance || tile.Type == TileType.RoomWall || tile.Type == TileType.RoomCorner)
+        if ((int)tile.Type >= 5) // if is room component
         {
             go.transform.localScale=new Vector3(2, 2, 2);
-            go.transform.Rotate(new Vector3(0, 1, 0), 180);
         }
-
-        // if (tile.Type == TileType.RoomCorner)
-        //     go.transform.Rotate(new Vector3(0, 1, 0), -90);
       
-        PlacedRooms.Add(tile.Position, go);
+        PlacedRooms.Add(tile.GetPositionVec2(), go);
     }
 
 
@@ -589,7 +237,4 @@ public class _WFC_Script : MonoBehaviour
         StartCoroutine(GenerateWFCMap());
         // SpawnMap();
     }
-
-
-    
 }
