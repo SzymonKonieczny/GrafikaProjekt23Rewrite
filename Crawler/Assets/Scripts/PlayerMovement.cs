@@ -39,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
     public Transform Hand;
     Quaternion camcenter;
 
+
+    [SerializeField] Item HeldIted;
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +52,15 @@ public class PlayerMovement : MonoBehaviour
     {
         DoMove();
         DoLook();
+    }
+    public void SetHandItem(Item i)
+    {
+        HeldIted = i;
+    }
+    public Item GetHandItem()
+    {
+        
+        return HeldIted;
     }
     void DoMove()
     {
@@ -150,10 +161,23 @@ public class PlayerMovement : MonoBehaviour
 
         }
     }
+    public Transform TakeAwayHeldItem()
+    {
+        if (Hand.transform.childCount > 0)
+        {
+            Transform[] Held = Hand.GetComponentsInChildren<Transform>();
+
+            HeldIted = null;
+            Hand.transform.DetachChildren();
+            return Held[1];
+        }
+        return null;
+
+ 
+    }
     void InteractionRay()
     {
         RaycastHit hit;
-        bool AlreadyInteracted = false;
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (Physics.Raycast(cams.transform.position, cams.transform.forward, out hit, 100))
@@ -164,8 +188,6 @@ public class PlayerMovement : MonoBehaviour
                 {
 
                     LookingAt.Interact(this);
-                    Debug.Log("Interacting");
-                    AlreadyInteracted = true;
                 }
                 else
                 {
@@ -174,7 +196,6 @@ public class PlayerMovement : MonoBehaviour
             }
 
         }
-        //if (!AlreadyInteracted)DropHeldItem(transform);
 
     }
 }

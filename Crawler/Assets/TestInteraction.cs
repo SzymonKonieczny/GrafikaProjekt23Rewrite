@@ -20,4 +20,14 @@ public class TestInteraction : MonoBehaviour, IInteractible
    {
         rb.velocity = new Vector3(0, 5, 0);
    }
+
+    void IInteractible.Interact(PlayerMovement player)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    void IInteractible.setInteractible(bool b)
+    {
+        throw new System.NotImplementedException();
+    }
 }

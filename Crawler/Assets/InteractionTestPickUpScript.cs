@@ -11,6 +11,16 @@ public class InteractionTestPickUpScript : MonoBehaviour, IInteractible
        
     }
 
+    void IInteractible.Interact(PlayerMovement player)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    void IInteractible.setInteractible(bool b)
+    {
+        throw new System.NotImplementedException();
+    }
+
     // Start is called before the first frame update
     void Start()
     {

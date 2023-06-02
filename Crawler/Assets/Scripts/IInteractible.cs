@@ -5,5 +5,7 @@ using UnityEngine;
 public interface IInteractible
 {
     public void Interact(PlayerMovement player);
+    public void setInteractible(bool b);
+
 
 }
