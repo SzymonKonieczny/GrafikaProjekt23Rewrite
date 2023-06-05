@@ -112,7 +112,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
 
     public int PlacedFloors = 0;
 
-    public readonly System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+    private System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
     public List<Transform> GetRoomTransforms() {
         Debug.LogError("TODO: GetRoomTransforms()");
@@ -120,7 +120,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
     }
 
     private void InitTemplates() {
-        TileTemplates.Clear();
+        // TileTemplates.Clear();
         foreach(TileType tt in (TileType[]) Enum.GetValues(typeof(TileType)))
         {
             TileTemplates.Add(new Tile(tt));
@@ -241,7 +241,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
                 if (OtherPossibilities.Count <= 0)
                 {
                     // Debug.LogError($"Spread() found 0 tiles at [{OtherCoords.x},{OtherCoords.y}]");
-                    continue;
+                    // continue;
                 }
                 var ValidPossibilities = GetPossibleNeighbours(Origin: CurrCoords, Direction: dir);
                 foreach(var CompareTile in OtherPossibilities)
