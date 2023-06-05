@@ -102,6 +102,8 @@ public class WFC : MonoBehaviour, IRoomPlacer
     [SerializeField] Dictionary<Vector2Int, List<Tile>> WFCMap;
     [SerializeField] Dictionary<Vector2Int, Tile> FinalWFCMap;
 
+    //          tiletype  direction    possible
+    Dictionary<(TileType, Vector2Int), List<TileType>> PossibleNeighbours = new Dictionary<(TileType, Vector2Int), List<TileType>>();
 
     [SerializeField] List<Tile> TileTemplates = new List<Tile>();
     [SerializeField] Vector2Int MapSize = new Vector2Int(15, 15);
@@ -116,10 +118,15 @@ public class WFC : MonoBehaviour, IRoomPlacer
     }
 
     private void InitTemplates() {
+        foreach(TileType tt in (TileType[]) Enum.GetValues(typeof(TileType)))
+        {
+            TileTemplates.Add(new Tile(tt));
+        }
     }
 
     private void InitMap(int width, int height)
     {
+        InitPossibleNeighbours();
         InitTemplates();
         Dictionary<Vector2Int, List<Tile>> Map = new Dictionary<Vector2Int, List<Tile>>();
 
@@ -141,891 +148,39 @@ public class WFC : MonoBehaviour, IRoomPlacer
         return false;
     }
 
+    private void InitPossibleNeighbours()
+    {
+        this.PossibleNeighbours = HF.GetPossibilities();
+    }
+
     private List<TileType> GetPossibleTileNeighbours(TileType t, Vector2Int d)
     {
         var ret = new List<TileType>();
-        //                                       tiletype  direction    possible
-        var PossibleNeighbours = new Dictionary<(TileType, Vector2Int), List<TileType>>();
-
-        PossibleNeighbours.Add( // EMPTY Z+
-            (TileType.Empty, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos,
-            }
-        ); // EMPTY Z+ END
-        PossibleNeighbours.Add( // EMPTY X+
-            (TileType.Empty, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xpos_Zpos, TileType.Room_L_Xpos_Zneg,
-            }
-        ); // EMPTY X+ END
-        PossibleNeighbours.Add( // EMPTY Z-
-            (TileType.Empty, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg,
-            }
-        ); // EMPTY Z- END
-        PossibleNeighbours.Add( // EMPTY X-
-            (TileType.Empty, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xneg_Zneg,
-            }
-        ); // EMPTY X- END
-
-        PossibleNeighbours.Add( // HALL_I_X Z+
-            (TileType.Hall_I_X, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg
-            }
-        ); // HALL_I_X Z+ END
-        PossibleNeighbours.Add( // HALL_I_X X+
-            (TileType.Hall_I_X, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // HALL_I_X X+ END
-        PossibleNeighbours.Add( // HALL_I_X Z-
-            (TileType.Hall_I_X, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos
-            }
-        ); // HALL_I_X Z- END
-        PossibleNeighbours.Add( // HALL_I_X X-
-            (TileType.Hall_I_X, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos
-            }
-        ); // HALL_I_X X- END
-
-        PossibleNeighbours.Add( // HALL_I_Z Z+
-            (TileType.Hall_I_Z, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // HALL_I_Z Z+ END
-        PossibleNeighbours.Add( // HALL_I_Z X+
-            (TileType.Hall_I_Z, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xneg_Zpos
-            }
-        ); // HALL_I_Z X+ END
-        PossibleNeighbours.Add( // HALL_I_Z Z-
-            (TileType.Hall_I_Z, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // HALL_I_Z Z- END
-        PossibleNeighbours.Add( // HALL_I_Z X-
-            (TileType.Hall_I_Z, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xpos_Zneg, TileType.Room_L_Xpos_Zpos
-            }
-        ); // HALL_I_Z X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_L_Xpos_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_L_Xpos_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_L_Xpos_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_L_Xpos_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xpos_Zneg, TileType.Room_L_Xpos_Zpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_L_Xneg_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_L_Xneg_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xneg_Zpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_L_Xneg_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_L_Xneg_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos,
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_L_Xneg_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_L_Xneg_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xneg_Zpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_L_Xneg_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_L_Xneg_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos,
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_L_Xpos_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_L_Xpos_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_L_Xpos_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_L_Xpos_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xneg_Zneg,
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_T_Z_Xneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_T_Z_Xneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xneg_Zpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_T_Z_Xneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_T_Z_Xneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_T_X_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_T_X_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_T_X_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_T_X_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_T_Z_Xpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_T_Z_Xpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_T_Z_Xpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_T_Z_Xpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xpos_Zneg, TileType.Room_L_Xpos_Zpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_T_X_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_T_X_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_T_X_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_T_X_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Hall_X, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Hall_X, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Hall_X, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Hall_X, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_I_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_I_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zneg,
-                // TileType.Room_T_Zpos,
-                TileType.Room_L_Xpos_Zpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_I_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_I_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zneg,
-                // TileType.Room_T_Zpos,
-                TileType.Room_L_Xneg_Zpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_I_Xneg, new Vector2Int(0, 1)), new List<TileType>() {
-                // TileType.Room_I_Xneg,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xpos_Zpos
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_I_Xneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xneg_Zpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_I_Xneg, new Vector2Int(0, -1)), new List<TileType>() {
-                // TileType.Room_I_Xneg,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xpos_Zneg
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_I_Xneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_I_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_I_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zpos,
-                // TileType.Room_T_Zneg,
-                TileType.Room_L_Xpos_Zneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_I_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_I_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zpos,
-                // TileType.Room_T_Zneg,
-                TileType.Room_L_Xneg_Zneg
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_I_Xpos, new Vector2Int(0, 1)), new List<TileType>() {
-                // TileType.Room_I_Xpos,
-                // TileType.Room_T_Xneg,
-                TileType.Room_L_Xneg_Zpos
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_I_Xpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_I_Xpos, new Vector2Int(0, -1)), new List<TileType>() {
-                // TileType.Room_I_Xpos,
-                // TileType.Room_T_Xneg,
-                TileType.Room_L_Xneg_Zneg
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_I_Xpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xpos_Zneg, TileType.Room_L_Xpos_Zpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_T_Xpos, new Vector2Int(0, 1)), new List<TileType>() {
-                // TileType.Room_I_Xneg,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xpos_Zpos
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_T_Xpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xneg,
-                TileType.Hall_X,
-                TileType.Room_T_Xneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_T_Xpos, new Vector2Int(0, -1)), new List<TileType>() {
-                // TileType.Room_I_Xneg,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xpos_Zneg
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_T_Xpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_T_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_T_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zpos,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xpos_Zneg
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_T_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xneg_Zpos,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zpos,
-                TileType.Hall_X,
-                TileType.Room_T_Zpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_T_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zpos,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xneg_Zneg
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_T_Xneg, new Vector2Int(0, 1)), new List<TileType>() {
-                // TileType.Room_I_Xpos,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xneg_Zpos
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_T_Xneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_T_Xneg, new Vector2Int(0, -1)), new List<TileType>() {
-                // TileType.Room_I_Xpos,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xneg_Zneg
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_T_Xneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zpos, TileType.Hall_T_X_Zneg, TileType.Hall_T_Z_Xpos,
-                TileType.Hall_X,
-                TileType.Room_T_Xpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_T_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zneg, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xpos, TileType.Hall_T_Z_Xneg, TileType.Hall_T_X_Zneg,
-                TileType.Hall_X,
-                TileType.Room_T_Zneg
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_T_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zneg,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xpos_Zpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_T_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Room_Floor
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_T_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                // TileType.Room_I_Zneg,
-                // TileType.Room_T_Xpos,
-                TileType.Room_L_Xneg_Zpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_L_Xpos_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Room_I_Xneg,
-                TileType.Room_T_Xpos,
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_L_Xpos_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xpos_Zpos, TileType.Room_L_Xpos_Zneg,
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_L_Xpos_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg,
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_L_Xpos_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Room_I_Zpos,
-                TileType.Room_T_Zneg,
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_L_Xneg_Zneg, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Room_I_Xpos,
-                TileType.Room_T_Xneg,
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_L_Xneg_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Room_I_Zpos,
-                TileType.Room_T_Zneg,
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_L_Xneg_Zneg, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zneg, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_X_Zneg,
-                TileType.Room_I_Zneg,
-                TileType.Room_L_Xneg_Zneg, TileType.Room_L_Xpos_Zneg,
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_L_Xneg_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xneg_Zneg,
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_L_Xneg_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos,
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_L_Xneg_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Room_I_Zneg,
-                TileType.Room_T_Zpos,
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_L_Xneg_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Room_I_Xpos,
-                TileType.Room_T_Xneg,
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_L_Xneg_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xneg_Zneg,
-                TileType.Hall_T_Z_Xneg,
-                TileType.Room_I_Xneg,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xneg_Zneg,
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_L_Xpos_Zpos, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_X,
-                TileType.Hall_L_Xneg_Zpos, TileType.Hall_L_Xpos_Zpos,
-                TileType.Hall_T_X_Zpos,
-                TileType.Room_I_Zpos,
-                TileType.Room_L_Xneg_Zpos, TileType.Room_L_Xpos_Zpos,
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_L_Xpos_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Empty,
-                TileType.Hall_I_Z,
-                TileType.Hall_L_Xpos_Zpos, TileType.Hall_L_Xpos_Zneg,
-                TileType.Hall_T_Z_Xpos,
-                TileType.Room_I_Xpos,
-                TileType.Room_L_Xpos_Zpos, TileType.Room_L_Xpos_Zneg,
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_L_Xpos_Zpos, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Room_I_Xneg,
-                TileType.Room_T_Xpos
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_L_Xpos_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Room_I_Zneg,
-                TileType.Room_T_Zpos
-            }
-        ); // X- END
-
-        PossibleNeighbours.Add( // Z+
-            (TileType.Room_Floor, new Vector2Int(0, 1)), new List<TileType>() {
-                TileType.Room_I_Zneg,
-                TileType.Room_T_Zpos
-            }
-        ); // Z+ END
-        PossibleNeighbours.Add( // X+
-            (TileType.Room_Floor, new Vector2Int(1, 0)), new List<TileType>() {
-                TileType.Room_I_Xneg,
-                TileType.Room_T_Xpos
-            }
-        ); // X+ END
-        PossibleNeighbours.Add( // Z-
-            (TileType.Room_Floor, new Vector2Int(0, -1)), new List<TileType>() {
-                TileType.Room_I_Zpos,
-                TileType.Room_T_Zneg
-            }
-        ); // Z- END
-        PossibleNeighbours.Add( // X-
-            (TileType.Room_Floor, new Vector2Int(-1, 0)), new List<TileType>() {
-                TileType.Room_I_Xpos,
-                TileType.Room_T_Xneg
-            }
-        ); // X- END
-
         PossibleNeighbours.TryGetValue((t, d), out ret);
         return ret;
     }
 
-    private IEnumerable<Tile> GetPossibleNeighbours(Vector2Int Origin, Vector2Int Direction)
+    private List<TileType> GetPossibleNeighbours(Vector2Int Origin, Vector2Int Direction)
     {
+        List<TileType> ret = new List<TileType>();
         List<Tile> OriginTiles = new List<Tile>();
         try {
             WFCMap.TryGetValue(Origin, out OriginTiles);
         } catch (KeyNotFoundException)
         {
-            Debug.LogError($"GetPossibleNeighbours() found 0 tiles at [{Origin.x},{Origin.y}]");
-            yield break;
+            Debug.LogError($"GetPossibleNeighbours() invalid coordinates: [{Origin.x},{Origin.y}]");
+            return ret;
         }
 
         foreach(Tile t in OriginTiles)
         {
-            foreach(Tile n in GetPossibleTileNeighbours(t, Direction))
+            foreach(TileType tt in GetPossibleTileNeighbours(t.Type, Direction))
             {
-                yield return n;
+                ret.Add(tt);
             }
         }
+
+        return ret;
     }
 
     private Vector2Int GetMinEntropyIdx()
@@ -1049,26 +204,63 @@ public class WFC : MonoBehaviour, IRoomPlacer
 
     private Vector2Int Iteration()
     {
-        Tile SelectedTile;
-        Vector2Int MinEntropyIdx;
-        List<Tile> MinEntropyCell;
-        MinEntropyIdx = GetMinEntropyIdx();
-        MinEntropyCell = WFCMap[GetMinEntropyIdx()];
-        SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
+        Vector2Int MinEntropyIdx = GetMinEntropyIdx();
+        List<Tile> MinEntropyCell = WFCMap[MinEntropyIdx];
+        if (MinEntropyCell.Count <= 0)
+        {
+            Debug.LogError($"Iteration() found 0 tiles at [{MinEntropyIdx.x},{MinEntropyIdx.y}]");
+        }
+        Tile SelectedTile = MinEntropyCell[UnityEngine.Random.Range(0, MinEntropyCell.Count)];
         FinalWFCMap.Add(MinEntropyIdx, SelectedTile);
+        SelectedTile.SetPosition(MinEntropyIdx);
         PlaceRoom(SelectedTile);
 
-        WFCMap[MinEntropyIdx] = new List<Tile>();
+        // WFCMap[MinEntropyIdx] = new List<Tile>();
+        WFCMap[MinEntropyIdx].Clear();
         WFCMap[MinEntropyIdx].Add(SelectedTile);
 
         return MinEntropyIdx;
     }
 
-    private void Spread(Vector2Int IdxToCheck)
+    private void Spread(Vector2Int Coords)
     {
-        if (!WFCMap.ContainsKey(IdxToCheck))
+        if (!WFCMap.ContainsKey(Coords))
         {
             return;
+        }
+        Stack<Vector2Int> CoordsStack = new Stack<Vector2Int>();
+
+        CoordsStack.Push(Coords);
+
+        while (CoordsStack.Count > 0)
+        {
+            var CurrCoords = CoordsStack.Pop();
+
+            foreach(Vector2Int dir in HF.ValidCoords(Coords: Coords, MaxH: MapSize.y, MaxW: MapSize.x))
+            {
+                var OtherCoords = Coords + dir;
+                var OtherPossibilities = WFCMap[OtherCoords];
+                if (OtherPossibilities.Count <= 0)
+                {
+                    Debug.LogError($"Spread() found 0 tiles at [{OtherCoords.x},{OtherCoords.y}]");
+                    continue;
+                }
+                var ValidPossibilities = GetPossibleNeighbours(Origin: Coords, Direction: dir);
+                foreach(var CompareTile in OtherPossibilities)
+                {
+                    if (!ValidPossibilities.Contains(CompareTile.Type))
+                    {
+                        // OtherPossibilities.Remove(CompareTile);
+                        if (!CoordsStack.Contains(OtherCoords))
+                        {
+                            CoordsStack.Push(OtherCoords);
+                        }
+                    }
+                }
+                OtherPossibilities.RemoveAll((ct) => {
+                    return (!ValidPossibilities.Contains(ct.Type));
+                });
+            }
         }
     }
 
@@ -1122,10 +314,16 @@ public class WFC : MonoBehaviour, IRoomPlacer
     private void PlaceRoom(Tile tile)
     {
         if (tile.Type == TileType.Room_Floor) PlacedFloors += 1;
+        if ((int)tile.Type > RoomPrefabs.Count)
+        {
+            int count = Enum.GetNames(typeof(TileType)).Length;
+            Debug.LogError("You forgot to add the prefab to the list!");
+            Debug.LogWarning($"Total count of prefabs should be: {count}");
+        }
         GameObject go = Instantiate(RoomPrefabs[(int)tile.Type]);
         go.transform.position = tile.GetPositionScaled(GridSize);
 
-        if ((int)tile.Type >= 5) // if is room component
+        if ((int)tile.Type >= 12) // if is room component
         {
             go.transform.localScale=new Vector3(2, 2, 2);
         }
