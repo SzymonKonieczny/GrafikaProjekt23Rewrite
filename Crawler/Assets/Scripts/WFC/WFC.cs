@@ -249,7 +249,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
                     if ((!ValidPossibilities.Contains(CompareTile.Type)) && (!CoordsStack.Contains(OtherCoords)))
                     {
                         CoordsStack.Push(OtherCoords);
-                        break;
+                        // break;
                     }
                 }
                 WFCMap[OtherCoords].RemoveAll((ct) => {
