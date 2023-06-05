@@ -178,7 +178,7 @@ MonoBehaviour:
   - {fileID: 7909336399754893252, guid: 2800324274fd0dbe58363eb3cb74009a, type: 3}
   - {fileID: 7909336399754893252, guid: 6b62475cf17c78f1c87fe2ccf497c97f, type: 3}
   - {fileID: 7053030384993846166, guid: 4d30575deb5771141a50ecc7532cddb9, type: 3}
-  MapSize: {x: 12, y: 12}
+  MapSize: {x: 20, y: 20}
   GridSize: 18
   WFCDelay: 0
   PlacedFloors: 0
