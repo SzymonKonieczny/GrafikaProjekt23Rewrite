@@ -236,16 +236,16 @@ public class WFC : MonoBehaviour, IRoomPlacer
         {
             var CurrCoords = CoordsStack.Pop();
 
-            foreach(Vector2Int dir in HF.ValidCoords(Coords: Coords, MaxH: MapSize.y, MaxW: MapSize.x))
+            foreach(Vector2Int dir in HF.ValidCoords(Coords: CurrCoords, MaxH: MapSize.y, MaxW: MapSize.x))
             {
-                var OtherCoords = Coords + dir;
+                var OtherCoords = CurrCoords + dir;
                 var OtherPossibilities = WFCMap[OtherCoords];
                 if (OtherPossibilities.Count <= 0)
                 {
                     Debug.LogError($"Spread() found 0 tiles at [{OtherCoords.x},{OtherCoords.y}]");
-                    continue;
+                    // continue;
                 }
-                var ValidPossibilities = GetPossibleNeighbours(Origin: Coords, Direction: dir);
+                var ValidPossibilities = GetPossibleNeighbours(Origin: CurrCoords, Direction: dir);
                 foreach(var CompareTile in OtherPossibilities)
                 {
                     if (!ValidPossibilities.Contains(CompareTile.Type))
@@ -257,7 +257,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
                         }
                     }
                 }
-                OtherPossibilities.RemoveAll((ct) => {
+                WFCMap[OtherCoords].RemoveAll((ct) => {
                     return (!ValidPossibilities.Contains(ct.Type));
                 });
             }
@@ -299,15 +299,31 @@ public class WFC : MonoBehaviour, IRoomPlacer
                 PlacedRooms.Clear();
                 FinalWFCMap.Clear();
                 WFCMap.Clear();
+                PlacedFloors = 0;
                 StartCoroutine(GenerateWFCMap());
-                yield return new WaitForSeconds(WFCDelay ? 0.075f : 0f);
+                yield break;
                 break;
+            } 
+            else
+            {
+                Tile MapTile = Cell.Value[0];
+                FinalWFCMap.Add(Cell.Key, MapTile);
             }
-            Tile MapTile = Cell.Value[0];
-            FinalWFCMap.Add(Cell.Key, MapTile);
         }
 
-        Debug.Log("WFC Finished");
+        if (PlacedFloors <= 2 || (PlacedFloors >= 8 && false))
+        {
+            foreach(var go in PlacedRooms)
+            {
+                Destroy(go.Value);
+            }
+            PlacedRooms.Clear();
+            FinalWFCMap.Clear();
+            WFCMap.Clear();
+            PlacedFloors = 0;
+            StartCoroutine(GenerateWFCMap());
+            yield break;
+        }
     }
 
     
@@ -325,7 +341,11 @@ public class WFC : MonoBehaviour, IRoomPlacer
 
         if ((int)tile.Type >= 12) // if is room component
         {
-            go.transform.localScale=new Vector3(2, 2, 2);
+            go.transform.localScale =new Vector3(2, 2, 2);
+        }
+        if ((int)tile.Type == 24)
+        {
+            go.transform.localScale =new Vector3(4, 1, 4);
         }
       
         PlacedRooms.Add(tile.GetPositionVec2(), go);
@@ -337,7 +357,10 @@ public class WFC : MonoBehaviour, IRoomPlacer
         PlacedRooms = new Dictionary<Vector2Int, GameObject>();
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
 
+        var watch = new System.Diagnostics.Stopwatch();
         StartCoroutine(GenerateWFCMap());
-        // SpawnMap();
+        watch.Stop();
+        var seconds = watch.ElapsedMilliseconds / 1000;
+        Debug.Log($"WFC Finished in {seconds} seconds");
     }
 }
