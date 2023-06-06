@@ -149,30 +149,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 318749735}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5201e525a2cd3d4a8ffffe51d735cfd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8bd1b8801c1ed37ad8fee8456157bee4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   RoomPrefabs:
   - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
-  - {fileID: 8785848329351094923, guid: 155fd96a73102a046a18e27ab23b7b5f, type: 3}
-  - {fileID: 8785848329351094923, guid: acb2bcc5eb3722c4da960ebba48ad94a, type: 3}
-  - {fileID: 8785848329351094923, guid: 9f735c9dea2f50d42a5c475571f746d8, type: 3}
-  - {fileID: 8785848329351094923, guid: e5a9d493e92689f4087425153aa4f377, type: 3}
-  - {fileID: 919132149155446097, guid: 5c9c671477001c54386da364e2572766, type: 3}
-  - {fileID: 919132149155446097, guid: 9322f48588a13c34dbd77acd7600b9df, type: 3}
-  - {fileID: 919132149155446097, guid: a3e337116fbc92140b52f9f63dd7c56e, type: 3}
+  - {fileID: 8785848329351094923, guid: 6d64010272db0ca488bcacf7b42a8605, type: 3}
+  - {fileID: 8785848329351094923, guid: c345f847416e05ea19cf856a499da145, type: 3}
+  - {fileID: 8785848329351094923, guid: 2cc1b901d3a5e2e2f865d51f5222bb3f, type: 3}
+  - {fileID: 8785848329351094923, guid: d842a9166ad0f8f21a58d5beb35c31e5, type: 3}
+  - {fileID: 8785848329351094923, guid: 0e6302ce8812e2ce085a017b2d2f0891, type: 3}
+  - {fileID: 8785848329351094923, guid: 6c5a6f8c3b09d637da39415ad5e6110e, type: 3}
+  - {fileID: 8785848329351094923, guid: 4ca51133432fc3c2a91e5200fe754776, type: 3}
+  - {fileID: 8785848329351094923, guid: b2de18fb8ba1d223580d29de5d94c55c, type: 3}
+  - {fileID: 8785848329351094923, guid: 178f38c09072a05029499bb623094105, type: 3}
+  - {fileID: 8785848329351094923, guid: 8dbf653dddff98d6cb48195d15bf4934, type: 3}
+  - {fileID: 8785848329351094923, guid: fe6a7474a47d3d6f3854a0824a970a71, type: 3}
+  - {fileID: 2575645450392585660, guid: 6ec45ac802c68be53a0f8c846a38d77a, type: 3}
+  - {fileID: 2575645450392585660, guid: 72f97f7bf2d47758397fdd3fc67ea4da, type: 3}
+  - {fileID: 2575645450392585660, guid: 2b448df352c16d62da5e444ea69eff2f, type: 3}
+  - {fileID: 2575645450392585660, guid: 8b997082b94e056ce9d83fd84317877f, type: 3}
+  - {fileID: 476404665871741772, guid: 430645058c94e4ed880bca6c783037c9, type: 3}
+  - {fileID: 476404665871741772, guid: 79d0ed1d44cc083859c379bdd15a2d01, type: 3}
+  - {fileID: 476404665871741772, guid: 2cc2f8b4723d1bfb6a90fe974f84211b, type: 3}
+  - {fileID: 476404665871741772, guid: 9a1b78b53ac7eaee796a109f38ea9f70, type: 3}
+  - {fileID: 7909336399754893252, guid: 3c89cdee0d0deb8a59b9c8ac4623cebb, type: 3}
+  - {fileID: 7909336399754893252, guid: 80f7ef72355c6504aa8959e4a739f209, type: 3}
+  - {fileID: 7909336399754893252, guid: 2800324274fd0dbe58363eb3cb74009a, type: 3}
+  - {fileID: 7909336399754893252, guid: 6b62475cf17c78f1c87fe2ccf497c97f, type: 3}
   - {fileID: 7053030384993846166, guid: 4d30575deb5771141a50ecc7532cddb9, type: 3}
-  PriorityEmpty: 4
-  PriorityI: 1
-  PriorityL: 3
-  PriorityT: 3
-  PriorityX: 1
-  PriorityRoom: 10
-  WFCDelay: 0
-  MaxFloors: 6
-  TileTemplates: []
-  MapSize: {x: 10, y: 10}
+  MapSize: {x: 20, y: 20}
   GridSize: 18
+  WFCDelay: 0
+  PlacedFloors: 0
 --- !u!4 &318749737
 Transform:
   m_ObjectHideFlags: 0
