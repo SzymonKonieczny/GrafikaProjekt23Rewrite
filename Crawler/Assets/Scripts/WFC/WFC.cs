@@ -299,7 +299,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
             FinalWFCMap.Clear();
             WFCMap.Clear();
             PlacedFloors = 0;
-            StartCoroutine(GenerateWFCMap());
+            yield return StartCoroutine(GenerateWFCMap());
             yield break;
         }
 
