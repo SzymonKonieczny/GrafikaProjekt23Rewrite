@@ -512,8 +512,8 @@ namespace Crawler {
             ); // Z+ END
             PossibleNeighbours.Add( // X+
                 (TileType.Room_I_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zneg,
-                    TileType.Room_T_Zpos,
+                    // TileType.Room_I_Zneg,
+                    // TileType.Room_T_Zpos,
                     TileType.Room_L_Xpos_Zpos
                 }
             ); // X+ END
@@ -525,16 +525,16 @@ namespace Crawler {
             ); // Z- END
             PossibleNeighbours.Add( // X-
                 (TileType.Room_I_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zneg,
-                    TileType.Room_T_Zpos,
+                    // TileType.Room_I_Zneg,
+                    // TileType.Room_T_Zpos,
                     TileType.Room_L_Xneg_Zpos
                 }
             ); // X- END
 
             PossibleNeighbours.Add( // Z+
                 (TileType.Room_I_Xneg, new Vector2Int(0, 1)), new List<TileType>() {
-                    TileType.Room_I_Xneg,
-                    TileType.Room_T_Xpos,
+                    // TileType.Room_I_Xneg,
+                    // TileType.Room_T_Xpos,
                     TileType.Room_L_Xpos_Zpos
                 }
             ); // Z+ END
@@ -550,8 +550,8 @@ namespace Crawler {
             ); // X+ END
             PossibleNeighbours.Add( // Z-
                 (TileType.Room_I_Xneg, new Vector2Int(0, -1)), new List<TileType>() {
-                    TileType.Room_I_Xneg,
-                    TileType.Room_T_Xpos,
+                    // TileType.Room_I_Xneg,
+                    // TileType.Room_T_Xpos,
                     TileType.Room_L_Xpos_Zneg
                 }
             ); // Z- END
@@ -570,8 +570,8 @@ namespace Crawler {
             ); // Z+ END
             PossibleNeighbours.Add( // X+
                 (TileType.Room_I_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zpos,
-                    TileType.Room_T_Zneg,
+                    // TileType.Room_I_Zpos,
+                    // TileType.Room_T_Zneg,
                     TileType.Room_L_Xpos_Zneg
                 }
             ); // X+ END
@@ -587,16 +587,16 @@ namespace Crawler {
             ); // Z- END
             PossibleNeighbours.Add( // X-
                 (TileType.Room_I_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zpos,
-                    TileType.Room_T_Zneg,
+                    // TileType.Room_I_Zpos,
+                    // TileType.Room_T_Zneg,
                     TileType.Room_L_Xneg_Zneg
                 }
             ); // X- END
 
             PossibleNeighbours.Add( // Z+
                 (TileType.Room_I_Xpos, new Vector2Int(0, 1)), new List<TileType>() {
-                    TileType.Room_I_Xpos,
-                    TileType.Room_T_Xneg,
+                    // TileType.Room_I_Xpos,
+                    // TileType.Room_T_Xneg,
                     TileType.Room_L_Xneg_Zpos
                 }
             ); // Z+ END
@@ -608,8 +608,8 @@ namespace Crawler {
             ); // X+ END
             PossibleNeighbours.Add( // Z-
                 (TileType.Room_I_Xpos, new Vector2Int(0, -1)), new List<TileType>() {
-                    TileType.Room_I_Xpos,
-                    TileType.Room_T_Xneg,
+                    // TileType.Room_I_Xpos,
+                    // TileType.Room_T_Xneg,
                     TileType.Room_L_Xneg_Zneg
                 }
             ); // Z- END
@@ -626,8 +626,8 @@ namespace Crawler {
 
             PossibleNeighbours.Add( // Z+
                 (TileType.Room_T_Xpos, new Vector2Int(0, 1)), new List<TileType>() {
-                    TileType.Room_I_Xneg,
-                    TileType.Room_T_Xpos,
+                    // TileType.Room_I_Xneg,
+                    // TileType.Room_T_Xpos,
                     TileType.Room_L_Xpos_Zpos
                 }
             ); // Z+ END
@@ -642,8 +642,8 @@ namespace Crawler {
             ); // X+ END
             PossibleNeighbours.Add( // Z-
                 (TileType.Room_T_Xpos, new Vector2Int(0, -1)), new List<TileType>() {
-                    TileType.Room_I_Xneg,
-                    TileType.Room_T_Xpos,
+                    // TileType.Room_I_Xneg,
+                    // TileType.Room_T_Xpos,
                     TileType.Room_L_Xpos_Zneg
                 }
             ); // Z- END
@@ -662,8 +662,8 @@ namespace Crawler {
             ); // Z+ END
             PossibleNeighbours.Add( // X+
                 (TileType.Room_T_Zneg, new Vector2Int(1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zpos,
-                    TileType.Room_T_Zneg,
+                    // TileType.Room_I_Zpos,
+                    // TileType.Room_T_Zneg,
                     TileType.Room_L_Xpos_Zneg
                 }
             ); // X+ END
@@ -678,16 +678,16 @@ namespace Crawler {
             ); // Z- END
             PossibleNeighbours.Add( // X-
                 (TileType.Room_T_Zneg, new Vector2Int(-1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zpos,
-                    TileType.Room_T_Zneg,
+                    // TileType.Room_I_Zpos,
+                    // TileType.Room_T_Zneg,
                     TileType.Room_L_Xneg_Zneg
                 }
             ); // X- END
 
             PossibleNeighbours.Add( // Z+
                 (TileType.Room_T_Xneg, new Vector2Int(0, 1)), new List<TileType>() {
-                    TileType.Room_I_Xpos,
-                    TileType.Room_T_Xneg,
+                    // TileType.Room_I_Xpos,
+                    // TileType.Room_T_Xneg,
                     TileType.Room_L_Xneg_Zpos
                 }
             ); // Z+ END
@@ -699,8 +699,8 @@ namespace Crawler {
             ); // X+ END
             PossibleNeighbours.Add( // Z-
                 (TileType.Room_T_Xneg, new Vector2Int(0, -1)), new List<TileType>() {
-                    TileType.Room_I_Xpos,
-                    TileType.Room_T_Xneg,
+                    // TileType.Room_I_Xpos,
+                    // TileType.Room_T_Xneg,
                     TileType.Room_L_Xneg_Zneg
                 }
             ); // Z- END
@@ -725,8 +725,8 @@ namespace Crawler {
             ); // Z+ END
             PossibleNeighbours.Add( // X+
                 (TileType.Room_T_Zpos, new Vector2Int(1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zneg,
-                    TileType.Room_T_Zpos,
+                    // TileType.Room_I_Zneg,
+                    // TileType.Room_T_Zpos,
                     TileType.Room_L_Xpos_Zpos
                 }
             ); // X+ END
@@ -738,8 +738,8 @@ namespace Crawler {
             ); // Z- END
             PossibleNeighbours.Add( // X-
                 (TileType.Room_T_Zpos, new Vector2Int(-1, 0)), new List<TileType>() {
-                    TileType.Room_I_Zneg,
-                    TileType.Room_T_Zpos,
+                    // TileType.Room_I_Zneg,
+                    // TileType.Room_T_Zpos,
                     TileType.Room_L_Xneg_Zpos
                 }
             ); // X- END
@@ -888,28 +888,28 @@ namespace Crawler {
                 (TileType.Room_Floor, new Vector2Int(0, 1)), new List<TileType>() {
                     TileType.Room_I_Zneg,
                     TileType.Room_T_Zpos,
-                    TileType.Room_Floor
+                    // TileType.Room_Floor
                 }
             ); // Z+ END
             PossibleNeighbours.Add( // X+
                 (TileType.Room_Floor, new Vector2Int(1, 0)), new List<TileType>() {
                     TileType.Room_I_Xneg,
                     TileType.Room_T_Xpos,
-                    TileType.Room_Floor
+                    // TileType.Room_Floor
                 }
             ); // X+ END
             PossibleNeighbours.Add( // Z-
                 (TileType.Room_Floor, new Vector2Int(0, -1)), new List<TileType>() {
                     TileType.Room_I_Zpos,
                     TileType.Room_T_Zneg,
-                    TileType.Room_Floor
+                    // TileType.Room_Floor
                 }
             ); // Z- END
             PossibleNeighbours.Add( // X-
                 (TileType.Room_Floor, new Vector2Int(-1, 0)), new List<TileType>() {
                     TileType.Room_I_Xpos,
                     TileType.Room_T_Xneg,
-                    TileType.Room_Floor
+                    // TileType.Room_Floor
                 }
             ); // X- END
 
