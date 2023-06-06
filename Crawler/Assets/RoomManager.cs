@@ -13,6 +13,8 @@ public class RoomManager : MonoBehaviour
     [SerializeField] List<Transform> Rooms;
     [SerializeField]RoomInteriorScript ChosenRoom;
     [SerializeField] RoomInteriorScript ChosenExit;
+    [SerializeField] RoomInteriorScript ChosenGemRoom;
+
     [SerializeField]GameObject GemPrefab;
     [SerializeField] GameObject KeyHolePrefab;
     [SerializeField] GameObject DoorPrefab;
@@ -39,8 +41,10 @@ public class RoomManager : MonoBehaviour
             if (distanceA > distanceB) return 1;
             else return -1;
         });
+
         ChosenExit = Rooms[Rooms.Count-1].GetComponent<RoomInteriorScript>();
-        ChosenRoom.PlaceInRoom(GemPrefab, RoomSocket.Gem);
+        ChosenGemRoom = Rooms[Rooms.Count/2].GetComponent<RoomInteriorScript>();
+        ChosenGemRoom.PlaceInRoom(GemPrefab, RoomSocket.Gem);
        GameObject Keyhole =  ChosenRoom.PlaceInRoom(KeyHolePrefab, RoomSocket.KeyHole);
         if(Keyhole!=null)
         {
