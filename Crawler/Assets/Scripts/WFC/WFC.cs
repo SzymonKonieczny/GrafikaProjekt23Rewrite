@@ -107,6 +107,9 @@ public class WFC : MonoBehaviour, IRoomPlacer
 
     [SerializeField] List<Tile> TileTemplates = new List<Tile>(25);
     [SerializeField] Vector2Int MapSize = new Vector2Int(15, 15);
+
+    public List<Transform> FloorList = new List<Transform>();
+
     public float GridSize = 18;
     public bool WFCDelay = true;
 
@@ -115,8 +118,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
     private System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
     public List<Transform> GetRoomTransforms() {
-        Debug.LogError("TODO: GetRoomTransforms()");
-        return new List<Transform>();
+        return FloorList;
     }
 
     private void InitTemplates() {
@@ -250,6 +252,7 @@ public class WFC : MonoBehaviour, IRoomPlacer
 
     public IEnumerator GenerateWFCMap()
     {
+        FloorList.Clear();
         InitMap(MapSize.x, MapSize.y);
 
         // Vector2Int p = new Vector2Int(3, 3);
@@ -329,6 +332,8 @@ public class WFC : MonoBehaviour, IRoomPlacer
         //     go.transform.localScale = new Vector3(4, 1, 4);
         // }
       
+        if (tile.Type == TileType.Room_Floor)
+            FloorList.Add(go.transform);
         PlacedRooms.Add(tile.GetPositionVec2(), go);
     }
 
