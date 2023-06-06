@@ -22,13 +22,15 @@ public class RoomManager : MonoBehaviour
     void Start()
     {
         RoomPlacer = _RoomPlacer as IRoomPlacer;
-        StartCoroutine(GenerateDungeon());
+        StartCoroutine(GenerateDungeon());  
     }
     IEnumerator GenerateDungeon()
     {
         yield return StartCoroutine(RoomPlacer.GenerateMap());
         Rooms = RoomPlacer.GetRoomTransforms();
-        ChosenRoom = Rooms[UnityEngine.Random.Range(0, Rooms.Count-1)].GetComponent<RoomInteriorScript>();
+        int index = UnityEngine.Random.Range(0, Rooms.Count - 1);
+        Debug.Log("Choosing room nr" + index);
+        ChosenRoom = Rooms[index].GetComponent<RoomInteriorScript>();
         Rooms.Sort((Transform a, Transform b) =>
         {
             float distanceA = Vector3.Distance(a.position, ChosenRoom.transform.position);
