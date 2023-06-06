@@ -7,7 +7,7 @@ using System.Linq;
 public class RoomManager : MonoBehaviour
 {
    // [RequiredInterface(typeof(IRoomPlacer))]
-    public WFC_Script _RoomPlacer;
+    public WFC _RoomPlacer;
     public IRoomPlacer RoomPlacer;
     // Start is called before the first frame update
     [SerializeField] List<Transform> Rooms;

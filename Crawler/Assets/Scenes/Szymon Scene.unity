@@ -260,7 +260,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 318749737}
-  - component: {fileID: 318749736}
   m_Layer: 0
   m_Name: WFC
   m_TagString: Untagged
@@ -268,40 +267,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &318749736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 318749735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5201e525a2cd3d4a8ffffe51d735cfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RoomPrefabs:
-  - {fileID: 3857831428078804602, guid: b1b590c8dcec85c46889cda43883756f, type: 3}
-  - {fileID: 8785848329351094923, guid: 155fd96a73102a046a18e27ab23b7b5f, type: 3}
-  - {fileID: 8785848329351094923, guid: acb2bcc5eb3722c4da960ebba48ad94a, type: 3}
-  - {fileID: 8785848329351094923, guid: 9f735c9dea2f50d42a5c475571f746d8, type: 3}
-  - {fileID: 8785848329351094923, guid: e5a9d493e92689f4087425153aa4f377, type: 3}
-  - {fileID: 476404665871741772, guid: 8158ed79765a8e94ba2ae0cb22869793, type: 3}
-  - {fileID: 2575645450392585660, guid: 513e0a55e45bb4c4db29c310e8a7dbe3, type: 3}
-  - {fileID: 7909336399754893252, guid: 0927db82dd7b5f6409e8ebc8430da786, type: 3}
-  - {fileID: 7053030384993846166, guid: 4d30575deb5771141a50ecc7532cddb9, type: 3}
-  PriorityEmpty: 4
-  PriorityI: 1
-  PriorityL: 3
-  PriorityT: 3
-  PriorityX: 1
-  PriorityRoom: 14
-  WFCDelay: 0
-  MaxFloors: 6
-  TileTemplates: []
-  RoomList: []
-  MapSize: {x: 5, y: 5}
-  GridSize: 18
 --- !u!4 &318749737
 Transform:
   m_ObjectHideFlags: 0
@@ -993,7 +958,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b535bcabc5524c4bb38ab15bf1e851d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _RoomPlacer: {fileID: 318749736}
+  _RoomPlacer: {fileID: 0}
   Rooms: []
   ChosenRoom: {fileID: 0}
   ChosenExit: {fileID: 0}

@@ -335,9 +335,17 @@ public class WFC : MonoBehaviour, IRoomPlacer
 
     void Start()
     {
+        //PlacedRooms = new Dictionary<Vector2Int, GameObject>();
+        //FinalWFCMap = new Dictionary<Vector2Int, Tile>();
+        //sw.Start();
+        //StartCoroutine(GenerateWFCMap());
+    }
+
+    IEnumerator IRoomPlacer.GenerateMap()
+    {
         PlacedRooms = new Dictionary<Vector2Int, GameObject>();
         FinalWFCMap = new Dictionary<Vector2Int, Tile>();
         sw.Start();
-        StartCoroutine(GenerateWFCMap());
+        yield return StartCoroutine(GenerateWFCMap());
     }
 }
