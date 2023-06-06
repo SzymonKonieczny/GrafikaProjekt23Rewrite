@@ -1234,6 +1234,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 332553181253049011, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
+      propertyPath: WFCDelay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 332553181253049011, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
+      propertyPath: MapSize.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 332553181253049011, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
+      propertyPath: MapSize.y
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 332553181253049022, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
       propertyPath: m_Name
       value: WFC
