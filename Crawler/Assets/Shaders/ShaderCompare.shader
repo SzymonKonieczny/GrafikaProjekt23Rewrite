@@ -1,4 +1,4 @@
-Shader "Custom/ShaderTest"
+Shader "Custom/ShaderCompare"
 {
     Properties
     {
@@ -6,6 +6,8 @@ Shader "Custom/ShaderTest"
         _MainTex("Albedo", 2D) = "white" {}
 
         _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+
+
 
         _Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
         _GlossMapScale("Smoothness Scale", Range(0.0, 1.0)) = 1.0
@@ -51,9 +53,13 @@ Shader "Custom/ShaderTest"
 
             SubShader
         {
-            Tags { "RenderType" = "Opaque" "PerformanceChecks" = "False" }
+            Tags { "RenderType" = "Opaque  " "PerformanceChecks" = "False" }
             LOD 300
 
+            Stencil {
+                Ref 0
+                Comp Equal
+            }
 
             // ------------------------------------------------------------------
             //  Base forward pass (directional light, emission, lightmaps, ...)
