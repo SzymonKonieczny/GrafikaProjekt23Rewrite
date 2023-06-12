@@ -1,21 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+using UnityEngine.Audio;
 
+using UnityEngine.AI;
+ enum EnemyState
+    {
+        Idle,
+        Wondering,
+        Notice,
+        Chacing
+    }
 public class EnemyScript : MonoBehaviour
 {
+   
     public float radius;
     [Range(0, 360)]
     public float angle;
-
+    public List<AudioClip> audioClips = new List<AudioClip>();
+    int currentlyPlayingSound;
+    public AudioSource audioSource;
     public GameObject playerRef;
     public NavMeshAgent  navmesh;
     public LayerMask targetMask;
     public LayerMask obstructionMask;
-
+    [SerializeField] EnemyState State= EnemyState.Idle;
     public bool canSeePlayer;
 
+
+
+    float IdleTimeLeft=5;
     private void Start()
     {
         playerRef = GameObject.FindGameObjectWithTag("Player");
@@ -28,6 +42,37 @@ public class EnemyScript : MonoBehaviour
         {
             navmesh.SetDestination(playerRef.transform.position);
         }
+        ManageState();
+
+    }
+    void ManageState()
+    {
+        switch (State)
+        {
+            case EnemyState.Idle:
+
+
+                break;
+            case EnemyState.Wondering:
+
+
+
+                break;
+            case EnemyState.Notice:
+
+
+                break;
+            case EnemyState.Chacing:
+
+
+
+                break;
+        }
+
+    }
+
+    void PickSoundToPlay()
+    {
 
     }
     private IEnumerator FOVRoutine()

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.AI.Navigation;
 
 
 public class RoomManager : MonoBehaviour
@@ -10,11 +11,12 @@ public class RoomManager : MonoBehaviour
     public WFC _RoomPlacer;
     public IRoomPlacer RoomPlacer;
     // Start is called before the first frame update
-    [SerializeField] List<Transform> Rooms;
+    public List<Transform> Rooms;
     [SerializeField]RoomInteriorScript ChosenRoom;
     [SerializeField] RoomInteriorScript ChosenExit;
     [SerializeField] RoomInteriorScript ChosenGemRoom;
 
+    [SerializeField] NavMeshSurface FloorNavigationMesh;
     [SerializeField]GameObject GemPrefab;
     [SerializeField] GameObject KeyHolePrefab;
     [SerializeField] GameObject DoorPrefab;
@@ -29,6 +31,9 @@ public class RoomManager : MonoBehaviour
     IEnumerator GenerateDungeon()
     {
         yield return StartCoroutine(RoomPlacer.GenerateMap());
+
+        FloorNavigationMesh.BuildNavMesh();
+
         Rooms = RoomPlacer.GetRoomTransforms();
         int index = UnityEngine.Random.Range(0, Rooms.Count - 1);
         Debug.Log("Choosing room nr" + index);
@@ -57,6 +62,10 @@ public class RoomManager : MonoBehaviour
         {
              doors = DoorObj.GetComponent<DoorScripit>();
         }
+
+
+
+
     }
     public void OnKeyInsterted()
     {
