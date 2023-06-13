@@ -28,6 +28,8 @@ public class RoomManager : MonoBehaviour
         RoomPlacer = _RoomPlacer as IRoomPlacer;
         StartCoroutine(GenerateDungeon());  
     }
+
+
     IEnumerator GenerateDungeon()
     {
         yield return StartCoroutine(RoomPlacer.GenerateMap());
