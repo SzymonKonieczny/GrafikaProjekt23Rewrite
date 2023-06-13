@@ -942,6 +942,8 @@ MonoBehaviour:
   Rooms: []
   ChosenRoom: {fileID: 0}
   ChosenExit: {fileID: 0}
+  ChosenGemRoom: {fileID: 0}
+  FloorNavigationMesh: {fileID: 0}
   GemPrefab: {fileID: 8378831514591241470, guid: b5c7bcf4431bc17488533e9a08453013, type: 3}
   KeyHolePrefab: {fileID: 5581804825324488963, guid: 79b9ac5bf98d57844b4ca141729c70e0, type: 3}
   DoorPrefab: {fileID: 5853776529610746286, guid: 94306c427b0e38c4685f28758c23fdf9, type: 3}
@@ -1240,11 +1242,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332553181253049011, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
       propertyPath: MapSize.x
-      value: 25
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 332553181253049011, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
       propertyPath: MapSize.y
-      value: 25
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 332553181253049022, guid: 351813c3e7fcc7afc89cb5410f8a6d96, type: 3}
       propertyPath: m_Name
