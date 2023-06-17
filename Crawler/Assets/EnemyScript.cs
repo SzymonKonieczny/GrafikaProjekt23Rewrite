@@ -24,24 +24,42 @@ public class EnemyScript : MonoBehaviour
     public NavMeshAgent  navmesh;
     public LayerMask targetMask;
     public LayerMask obstructionMask;
-    [SerializeField] EnemyState State= EnemyState.Idle;
+    [SerializeField] EnemyState State= EnemyState.Wondering;
+    [SerializeField] EnemyState PreNoticeState = EnemyState.Wondering;
+
     public bool canSeePlayer;
+    public Transform CurrentlyChosenRoom;
 
 
+    [SerializeField] float CloseEnoughToRoom = 3;
 
-    float IdleTimeLeft=5;
+    [SerializeField] float IdleTimeLeft =0;
     private void Start()
     {
         playerRef = GameObject.FindGameObjectWithTag("Player");
-        StartCoroutine(FOVRoutine());
+        SetRandomRoom();
+    StartCoroutine(FOVRoutine());
+      //  navmesh.isStopped = true; //Optymizacja, po prostu zostaw to tak
     }
+    void SetRandomRoom()
+    {
+        int randomID = UnityEngine.Random.Range(0, RoomManager.instance.Rooms.Count - 1);
+        Debug.Log("Random Room choes by the enemy is: " + randomID);
+        CurrentlyChosenRoom = RoomManager.instance.Rooms[randomID];
 
+    }
     private void Update()
     {
-        if (canSeePlayer)
+        if (canSeePlayer && State != EnemyState.Chacing)
         {
-            navmesh.SetDestination(playerRef.transform.position);
+            PreNoticeState = State;
+            State = EnemyState.Chacing;
         }
+        else State = PreNoticeState;
+        
+        
+
+        
         ManageState();
 
     }
@@ -51,11 +69,36 @@ public class EnemyScript : MonoBehaviour
         {
             case EnemyState.Idle:
 
+                if(IdleTimeLeft<=0)
+                {
+                    SetRandomRoom();
+
+                    State = EnemyState.Wondering;
+                    PreNoticeState = EnemyState.Wondering;
+
+                }
+                else
+                {
+                    IdleTimeLeft -= Time.deltaTime;
+                }
 
                 break;
             case EnemyState.Wondering:
 
+                navmesh.SetDestination(CurrentlyChosenRoom.transform.position);
+                if(navmesh.isStopped)
+                {
+                    navmesh.isStopped = false;
+                }
+                Debug.Log("Distance to chosen room : " + Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position));
+                if(Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position) < CloseEnoughToRoom)
+                {
+                    State = EnemyState.Idle;
+                    PreNoticeState = EnemyState.Idle;
+                    IdleTimeLeft = UnityEngine.Random.Range(1f, 5f);
+                    navmesh.isStopped = true;
 
+                }
 
                 break;
             case EnemyState.Notice:
@@ -63,6 +106,8 @@ public class EnemyScript : MonoBehaviour
 
                 break;
             case EnemyState.Chacing:
+
+                navmesh.SetDestination(playerRef.transform.position);
 
 
 

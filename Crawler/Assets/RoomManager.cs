@@ -21,8 +21,23 @@ public class RoomManager : MonoBehaviour
     [SerializeField] GameObject KeyHolePrefab;
     [SerializeField] GameObject DoorPrefab;
 
-    DoorScripit doors;
+    [SerializeField] GameObject EnemyPrefab;
 
+    DoorScripit doors;
+    public static RoomManager instance;
+    private void Awake()
+    {
+        // If there is an instance, and it's not me, delete myself.
+
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
     void Start()
     {
         RoomPlacer = _RoomPlacer as IRoomPlacer;
@@ -65,9 +80,14 @@ public class RoomManager : MonoBehaviour
              doors = DoorObj.GetComponent<DoorScripit>();
         }
 
+        SpawnEnemies();
 
 
-
+    }
+    void SpawnEnemies()
+    {
+        int RoomSpawn = 4;
+        Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
     }
     public void OnKeyInsterted()
     {
