@@ -95,7 +95,7 @@ public class EnemyScript : MonoBehaviour
                 {
                     State = EnemyState.Idle;
                     PreNoticeState = EnemyState.Idle;
-                    IdleTimeLeft = UnityEngine.Random.Range(1f, 5f);
+                    IdleTimeLeft = UnityEngine.Random.Range(1f, 2f);
                     navmesh.isStopped = true;
 
                 }
