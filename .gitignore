@@ -35,6 +35,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Crawler/Builds/*
 
 # DODANE PRZEZ MAĆKA :P
 Crawler/Logs/*
