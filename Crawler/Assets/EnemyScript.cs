@@ -27,6 +27,10 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] EnemyState State= EnemyState.Wondering;
     [SerializeField] EnemyState PreNoticeState = EnemyState.Wondering;
 
+
+    [SerializeField] Animator Animator;
+
+
     public bool canSeePlayer;
     public Transform CurrentlyChosenRoom;
 
@@ -36,6 +40,7 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] float IdleTimeLeft =0;
     private void Start()
     {
+        Animator = GetComponent<Animator>();
         playerRef = GameObject.FindGameObjectWithTag("Player");
         SetRandomRoom();
     StartCoroutine(FOVRoutine());
@@ -56,8 +61,7 @@ public class EnemyScript : MonoBehaviour
             State = EnemyState.Chacing;
         }
         else State = PreNoticeState;
-        
-        
+    
 
         
         ManageState();
@@ -69,6 +73,7 @@ public class EnemyScript : MonoBehaviour
         {
             case EnemyState.Idle:
 
+                Animator.SetBool("isRunning", false);
                 if(IdleTimeLeft<=0)
                 {
                     SetRandomRoom();
@@ -79,11 +84,13 @@ public class EnemyScript : MonoBehaviour
                 }
                 else
                 {
+                
                     IdleTimeLeft -= Time.deltaTime;
                 }
 
                 break;
             case EnemyState.Wondering:
+                Animator.SetBool("isRunning", true);
 
                 navmesh.SetDestination(CurrentlyChosenRoom.transform.position);
                 if(navmesh.isStopped)

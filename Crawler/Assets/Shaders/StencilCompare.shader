@@ -6,7 +6,9 @@ Shader "Custom/StencilCompare"
         _MainTex("Albedo", 2D) = "white" {}
 
         _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-       [IntRange] _StencilRef("Stencil Reference", Range(0,255)) = 0
+
+       [IntRange] _StencilRef("Stencil Reference", Range(0,255)) = 1
+
 
 
 
@@ -50,9 +52,12 @@ Shader "Custom/StencilCompare"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Opaque" "Queue " = "Geometry+1"}
         LOD 200
-
+                Stencil {
+                Ref[_StencilRef]
+                Comp Equal
+                 }
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
         #pragma surface surf Standard fullforwardshadows

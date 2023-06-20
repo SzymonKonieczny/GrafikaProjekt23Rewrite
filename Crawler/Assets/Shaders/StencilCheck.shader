@@ -1,4 +1,4 @@
-Shader "Custom/StencilSet"
+Shader "Custom/StencilCheck"
 {
     Properties
     {
@@ -14,14 +14,9 @@ Shader "Custom/StencilSet"
      Tags { "RenderType" = "Opaque  " "PerformanceChecks" = "False"  "Queue " = "Geometry-1"}
 
         LOD 200
-            Blend Zero One
-            ColorMask 0
-            ZWrite Off
             Stencil {
                 Ref[_StencilRef]
-                Comp Always
-                Pass Replace
-                Fail Keep
+                Comp Equal
             }
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
