@@ -34,8 +34,13 @@ public class EnemyScript : MonoBehaviour
     public bool canSeePlayer;
     public Transform CurrentlyChosenRoom;
 
+    public Vector3 PlayerLastSeenPosition;
 
     [SerializeField] float CloseEnoughToRoom = 3;
+
+    [SerializeField] float TimeToForgetPlayer = 0;
+    [SerializeField] float SetTimeToForgetPlayer = 3;
+
 
     [SerializeField] float IdleTimeLeft =0;
     private void Start()
@@ -53,16 +58,39 @@ public class EnemyScript : MonoBehaviour
         CurrentlyChosenRoom = RoomManager.instance.Rooms[randomID];
 
     }
+    bool SawPlayerBefore = false;
+
+
+
     private void Update()
     {
-        if (canSeePlayer && State != EnemyState.Chacing)
-        {
-            PreNoticeState = State;
-            State = EnemyState.Chacing;
-        }
-        else State = PreNoticeState;
-    
+        bool playerDiscovered = false;
+        bool playerLost = false;
 
+        TimeToForgetPlayer -= Time.deltaTime;
+        if (canSeePlayer) TimeToForgetPlayer = SetTimeToForgetPlayer;
+
+        if (canSeePlayer != SawPlayerBefore)
+        {
+            if (canSeePlayer)
+                playerDiscovered = true;
+            else
+            {
+                playerLost = true;
+                PlayerLastSeenPosition = playerRef.transform.position;
+            }
+        }
+       if (playerDiscovered)
+        { 
+            PreNoticeState = State;
+            State = EnemyState.Chacing;        
+        }
+        if (playerLost)
+            {
+            State = PreNoticeState;
+            }
+    
+        SawPlayerBefore = canSeePlayer;
         
         ManageState();
 
@@ -107,7 +135,10 @@ public class EnemyScript : MonoBehaviour
 
                 }
 
-                break;
+                
+                if(TimeToForgetPlayer>0)
+                    navmesh.SetDestination(playerRef.transform.position);
+                    break;
             case EnemyState.Notice:
 
 
