@@ -97,14 +97,11 @@ public class PlayerMovement : MonoBehaviour
         Quaternion t_adjust = Quaternion.AngleAxis(t_input, -Vector3.right);
         Quaternion t_delta = cams.localRotation * t_adjust;
 
-        if (Quaternion.Angle(camcenter, t_delta) < maxAngle)
-        {
-            cams.localRotation = t_delta;
-            //weapon.localRotation = t_delta;
-        }
-
-
+        if (t_delta.x >= 0.6f) t_delta.x = 0.6f;
+        else if (t_delta.x <= -0.6f) t_delta.x = -0.6f;
+        cams.localRotation = t_delta;
     }
+
     void setX()
     {
         float t_input = Input.GetAxis("Mouse X") * xsens * Time.deltaTime;
