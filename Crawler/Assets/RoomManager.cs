@@ -21,9 +21,13 @@ public class RoomManager : MonoBehaviour
     [SerializeField] GameObject KeyHolePrefab;
     [SerializeField] GameObject DoorPrefab;
 
+    [SerializeField] GameObject Player;
+
     [SerializeField] GameObject EnemyPrefab;
 
     FinishRoomScript doors;
+
+    public LoadingUI LoadingScreen;
     public static RoomManager instance;
     private void Awake()
     {
@@ -47,9 +51,18 @@ public class RoomManager : MonoBehaviour
 
     IEnumerator GenerateDungeon()
     {
+        LoadingScreen.gameObject.SetActive(true);
+        LoadingScreen.SetSliderCompletion(0.1f);
+        LoadingScreen.SetText("Generating Level ...");
+        yield return new WaitForSeconds(0.1f);
+
+
         yield return StartCoroutine(RoomPlacer.GenerateMap());
 
-        FloorNavigationMesh.BuildNavMesh();
+        LoadingScreen.SetSliderCompletion(0.5f);
+        LoadingScreen.SetText("Generating Rooms ...");
+
+        yield return new WaitForSeconds(0.1f);
 
         Rooms = RoomPlacer.GetRoomTransforms();
         int index = UnityEngine.Random.Range(0, Rooms.Count - 1);
@@ -80,8 +93,21 @@ public class RoomManager : MonoBehaviour
              doors = DoorObj.GetComponent<FinishRoomScript>();
         }
 
-        SpawnEnemies();
+        LoadingScreen.SetSliderCompletion(0.7f);
+        LoadingScreen.SetText("Generating NavigationMesh ...");
+        yield return new WaitForSeconds(0.1f);
 
+        FloorNavigationMesh.BuildNavMesh();
+
+
+        LoadingScreen.SetSliderCompletion(0.99f);
+        LoadingScreen.SetText("Generating Enemies ...");
+        yield return new WaitForSeconds(0.1f);
+
+        Player.transform.SetPositionAndRotation(Rooms[Rooms.Count - 2].position + new Vector3(1,1,1) , Player.transform.rotation);
+
+        SpawnEnemies();
+        LoadingScreen.gameObject.SetActive(false);
 
     }
     void SpawnEnemies()

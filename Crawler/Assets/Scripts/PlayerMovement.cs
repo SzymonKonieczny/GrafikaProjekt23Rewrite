@@ -29,11 +29,13 @@ public class PlayerMovement : MonoBehaviour
     public Transform Player;
     public Transform cams;
     public Transform weapon;
+    public bool Dead = false;
     public float xsens;
     public float ysens;
     public float maxAngle;
     public static bool CursorLocked = true;
     bool cursorlockcooldown;
+    public GameObject JumpscareObject;
     [SerializeField] LayerMask RayMask;
    // [SerializeField] Camera camera;
     public Transform Hand;
@@ -86,6 +88,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void DoLook()
     {
+        if (Dead) return;
         setY();
         setX();
         if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape)) StartCoroutine(UpdateCursorLock());
@@ -171,6 +174,21 @@ public class PlayerMovement : MonoBehaviour
         return null;
 
  
+    }
+    public void PlayJumpscare()
+    {
+        StartCoroutine(PlayJumpscareEnumerator());
+    }
+    private IEnumerator PlayJumpscareEnumerator()
+    {
+        yield return new WaitForSecondsRealtime(0.02f);
+        Dead = true;
+        JumpscareObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(2f);
+        JumpscareObject.SetActive(false);
+        Dead = false;
+
+
     }
     void InteractionRay()
     {

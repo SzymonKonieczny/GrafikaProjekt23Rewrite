@@ -1829,9 +1829,10 @@ GameObject:
   - component: {fileID: 7313886522705537736}
   - component: {fileID: 7313886522705537739}
   - component: {fileID: 4416991377294385158}
+  - component: {fileID: 7883111305847343429}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1897,8 +1898,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 5
-  m_Acceleration: 8
+  m_Speed: 8.5
+  m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 200
   m_StoppingDistance: 2
@@ -1921,7 +1922,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: fb1a9371c426c73428e204919b4fe7cc, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -1930,7 +1931,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 10
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -2049,6 +2050,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!136 &7883111305847343429
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7313886522705537732}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.13
+  m_Height: 2.4
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.87, z: 0}
 --- !u!1 &7484823148353563973
 GameObject:
   m_ObjectHideFlags: 0

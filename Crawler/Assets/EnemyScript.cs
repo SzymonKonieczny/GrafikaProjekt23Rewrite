@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-
 using UnityEngine.AI;
  enum EnemyState
     {
@@ -125,7 +124,7 @@ public class EnemyScript : MonoBehaviour
                 {
                     navmesh.isStopped = false;
                 }
-                Debug.Log("Distance to chosen room : " + Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position));
+               // Debug.Log("Distance to chosen room : " + Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position));
                 if(Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position) < CloseEnoughToRoom)
                 {
                     State = EnemyState.Idle;
@@ -169,7 +168,18 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
 
+        if (other.CompareTag("Player") )
+        {
+            PlayerMovement playerMoveScript = playerRef.GetComponent<PlayerMovement>();
+            //  if (playerMoveScript.Dead) return;
+
+            playerMoveScript.PlayJumpscare();
+            Destroy(this.gameObject);
+        }
+    }
     private void FieldOfViewCheck()
     {
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
