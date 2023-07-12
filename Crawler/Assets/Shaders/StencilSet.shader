@@ -22,6 +22,7 @@ Shader "Custom/StencilSet"
                 Comp Always
                 Pass Replace
                 Fail Keep
+                ZFail Keep
             }
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types

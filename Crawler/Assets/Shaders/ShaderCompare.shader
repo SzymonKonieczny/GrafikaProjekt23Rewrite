@@ -7,7 +7,6 @@ Shader "Custom/ShaderCompare"
 
         _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
-       [IntRange] _StencilRef("Stencil Reference", Range(0,255)) = 0
 
 
         _Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
@@ -54,11 +53,11 @@ Shader "Custom/ShaderCompare"
 
             SubShader
         {
-            Tags { "RenderType" = "Opaque  " "PerformanceChecks" = "False" }
+            Tags { "RenderType" = "Opaque  " "PerformanceChecks" = "False" "Queue " = "Geometry+1"}
             LOD 300
 
             Stencil {
-                Ref 1
+                Ref 0
                 Comp Equal
             }
 
