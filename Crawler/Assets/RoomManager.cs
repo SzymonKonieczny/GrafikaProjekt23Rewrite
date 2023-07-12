@@ -23,7 +23,7 @@ public class RoomManager : MonoBehaviour
 
     [SerializeField] GameObject EnemyPrefab;
 
-    DoorScripit doors;
+    FinishRoomScript doors;
     public static RoomManager instance;
     private void Awake()
     {
@@ -77,7 +77,7 @@ public class RoomManager : MonoBehaviour
         GameObject DoorObj = ChosenExit.PlaceInRoom(DoorPrefab, RoomSocket.Door);
         if (DoorObj != null)
         {
-             doors = DoorObj.GetComponent<DoorScripit>();
+             doors = DoorObj.GetComponent<FinishRoomScript>();
         }
 
         SpawnEnemies();
@@ -87,6 +87,12 @@ public class RoomManager : MonoBehaviour
     void SpawnEnemies()
     {
         int RoomSpawn = 4;
+        Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
+
+       RoomSpawn = 2;
+        Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
+
+         RoomSpawn = 1;
         Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
     }
     public void OnKeyInsterted()
