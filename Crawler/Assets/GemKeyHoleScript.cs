@@ -26,6 +26,8 @@ public class GemKeyHoleScript : MonoBehaviour, IInteractible
             {
                 IInteractible gem = PlayersItemTransform.GetComponent<MagicGemScript>();
                 gem.setInteractible(false);
+                PlayersItemTransform.localPosition = new Vector3(0, 0, 0);
+
                 PlayersItemTransform.position = GemSocket.position;
                 PlayersItemTransform.parent = GemSocket;
                 this.setInteractible(false);
