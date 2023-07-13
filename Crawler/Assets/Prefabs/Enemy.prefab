@@ -1887,6 +1887,7 @@ MonoBehaviour:
   CloseEnoughToRoom: 3
   TimeToForgetPlayer: 0
   SetTimeToForgetPlayer: 3
+  ChangeRoomDestinationTimeout: 30
   IdleTimeLeft: 0
 --- !u!195 &7313886522705537737
 NavMeshAgent:
@@ -2060,7 +2061,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 1.13
+  m_Radius: 0.48
   m_Height: 2.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.87, z: 0}

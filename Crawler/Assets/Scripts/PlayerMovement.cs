@@ -54,10 +54,11 @@ public class PlayerMovement : MonoBehaviour
     {
         DoMove();
         if (Cursor.lockState == CursorLockMode.Locked) DoLook();
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape))
+        {
+            StartCoroutine(UpdateCursorLock());
             RestartScreen.gameObject.SetActive(!RestartScreen.gameObject.activeInHierarchy);
-        if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape)) StartCoroutine(UpdateCursorLock());
-
+        }
     }
     public void SetHandItem(Item i)
     {
@@ -118,7 +119,7 @@ public class PlayerMovement : MonoBehaviour
     IEnumerator UpdateCursorLock()
     {
         cursorlockcooldown = true;
-        if (CursorLocked)
+        if (Cursor.lockState != CursorLockMode.Locked)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

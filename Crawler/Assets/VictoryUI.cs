@@ -8,6 +8,12 @@ public class VictoryUI : MonoBehaviour
 {
     public TMPro.TMP_Text Text;
 
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+    }
     public void OnMainMenuButton()
     {
         SceneManager.LoadScene("Main Menu");

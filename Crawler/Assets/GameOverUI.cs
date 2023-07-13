@@ -5,7 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class GameOverUI : MonoBehaviour
 {
-      public void OnMainMenuButton()
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+    }
+    public void OnMainMenuButton()
     {
         SceneManager.LoadScene("Main Menu");
 

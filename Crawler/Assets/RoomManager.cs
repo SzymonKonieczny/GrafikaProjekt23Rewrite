@@ -112,7 +112,7 @@ public class RoomManager : MonoBehaviour
 
         Player.transform.SetPositionAndRotation(Rooms[Rooms.Count - 2].position + new Vector3(1,1,1) , Player.transform.rotation);
 
-        SpawnEnemies(index, Rooms.Count - 1, Rooms.Count / 2);
+        SpawnEnemies(index, Rooms.Count - 3, Rooms.Count / 2);
         LoadingScreen.gameObject.SetActive(false);
         GameStartTimestamp = Time.time;
 
