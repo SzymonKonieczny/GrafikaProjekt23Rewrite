@@ -1975,7 +1975,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: This may take up to a couple of minutes
+  m_text: 'This may take up to a couple of minutes
+
+    If you want to void your
+    run, press ESC to restart.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6480,7 +6483,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "YOU DIED\t"
+  m_text: the game IS NOT paused
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -6489,8 +6492,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190270
-  m_fontColor: {r: 0.745283, g: 0, b: 0, a: 1}
+    rgba: 4287993326
+  m_fontColor: {r: 0.9339623, g: 0.58592916, b: 0.58592916, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -7108,6 +7111,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   Hand: {fileID: 913246454}
+  RestartScreen: {fileID: 1855644334}
   HeldIted: {fileID: 0}
 --- !u!136 &1255876645
 CapsuleCollider:
@@ -8573,7 +8577,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1506415807}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1855644334}
+        m_TargetAssemblyTypeName: RestartUI, Assembly-CSharp
+        m_MethodName: OnMainMenuButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1506415807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10574,6 +10590,7 @@ GameObject:
   - component: {fileID: 1855644331}
   - component: {fileID: 1855644333}
   - component: {fileID: 1855644332}
+  - component: {fileID: 1855644334}
   m_Layer: 5
   m_Name: Restart UI
   m_TagString: Untagged
@@ -10616,14 +10633,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 26ab4a87ff7e5e2dfaca2afb663789c9, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10641,6 +10658,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1855644330}
   m_CullTransparentMesh: 1
+--- !u!114 &1855644334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855644330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96c5b63f299986418b21f672bff8ccf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1864095373
 PrefabInstance:
   m_ObjectHideFlags: 0

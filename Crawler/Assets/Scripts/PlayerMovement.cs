@@ -41,19 +41,23 @@ public class PlayerMovement : MonoBehaviour
     public Transform Hand;
     Quaternion camcenter;
 
-
+    [SerializeField] RestartUI RestartScreen;
     [SerializeField] Item HeldIted;
     // Start is called before the first frame update
     void Start()
     {
-        
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
         DoMove();
-        DoLook();
+        if (Cursor.lockState == CursorLockMode.Locked) DoLook();
+        if (Input.GetKeyDown(KeyCode.Escape))
+            RestartScreen.gameObject.SetActive(!RestartScreen.gameObject.activeInHierarchy);
+        if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape)) StartCoroutine(UpdateCursorLock());
+
     }
     public void SetHandItem(Item i)
     {
@@ -91,7 +95,6 @@ public class PlayerMovement : MonoBehaviour
         if (Dead) return;
         setY();
         setX();
-        if (!cursorlockcooldown && Input.GetKeyDown(KeyCode.Escape)) StartCoroutine(UpdateCursorLock());
         InteractionRay();
     }
     void setY()
