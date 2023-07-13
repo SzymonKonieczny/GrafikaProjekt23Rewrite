@@ -56,6 +56,7 @@ public class RoomManager : MonoBehaviour
 
     IEnumerator GenerateDungeon()
     {
+        HashSet<int> OccupiedRooms = new HashSet<int>();
         LoadingScreen.gameObject.SetActive(true);
         LoadingScreen.SetSliderCompletion(0.1f);
         LoadingScreen.SetText("Generating Level ...");
@@ -83,7 +84,9 @@ public class RoomManager : MonoBehaviour
         });
 
         ChosenExit = Rooms[Rooms.Count-1].GetComponent<RoomInteriorScript>();
+
         ChosenGemRoom = Rooms[Rooms.Count/2].GetComponent<RoomInteriorScript>();
+
         ChosenGemRoom.PlaceInRoom(GemPrefab, RoomSocket.Gem);
        GameObject Keyhole =  ChosenRoom.PlaceInRoom(KeyHolePrefab, RoomSocket.KeyHole);
         if(Keyhole!=null)
@@ -110,12 +113,26 @@ public class RoomManager : MonoBehaviour
         LoadingScreen.SetText("Generating Enemies ...");
         yield return new WaitForSeconds(0.1f);
 
-        Player.transform.SetPositionAndRotation(Rooms[Rooms.Count - 2].position + new Vector3(1,1,1) , Player.transform.rotation);
-
         SpawnEnemies(index, Rooms.Count - 3, Rooms.Count / 2);
+        OccupiedRooms.Add(index);
+        OccupiedRooms.Add(Rooms.Count - 3);
+        OccupiedRooms.Add(Rooms.Count / 2);
+
+        index = GetPlayerSpawn(OccupiedRooms);
+        Player.transform.SetPositionAndRotation(Rooms[index].position + new Vector3(1,1,1) , Player.transform.rotation);
+
         LoadingScreen.gameObject.SetActive(false);
         GameStartTimestamp = Time.time;
 
+    }
+    int GetPlayerSpawn(HashSet<int> OccupiedRooms)
+    {
+        int res= UnityEngine.Random.Range(0, Rooms.Count - 1);
+        while (OccupiedRooms.Contains(res))
+        {
+            res = UnityEngine.Random.Range(0, Rooms.Count - 1);
+        }
+        return res;
     }
     void SpawnEnemies(int a, int b, int c)
     {
