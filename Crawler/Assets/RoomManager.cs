@@ -25,14 +25,19 @@ public class RoomManager : MonoBehaviour
 
     [SerializeField] GameObject EnemyPrefab;
 
-    FinishRoomScript doors;
+
+
+    [SerializeField] FinishRoomScript doors;
+    public VictoryUI VictoryScreen;
 
     public LoadingUI LoadingScreen;
+    public float GameStartTimestamp;
+
     public static RoomManager instance;
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
-
+        Time.timeScale = 1;
         if (instance != null && instance != this)
         {
             Destroy(this);
@@ -91,6 +96,7 @@ public class RoomManager : MonoBehaviour
         if (DoorObj != null)
         {
              doors = DoorObj.GetComponent<FinishRoomScript>();
+            doors.OnMazeLeave = OnMazeLeave;
         }
 
         LoadingScreen.SetSliderCompletion(0.7f);
@@ -108,6 +114,7 @@ public class RoomManager : MonoBehaviour
 
         SpawnEnemies();
         LoadingScreen.gameObject.SetActive(false);
+        GameStartTimestamp = Time.time;
 
     }
     void SpawnEnemies()
@@ -125,7 +132,13 @@ public class RoomManager : MonoBehaviour
     {
         doors.OpenDoor();
     }
-
+    public void OnMazeLeave()
+    {
+        Time.timeScale = 0;
+        VictoryScreen.gameObject.SetActive(true);
+        VictoryScreen.setText("You escaped in : " + (int)( Time.time- GameStartTimestamp) + "seconds!");
+        
+    }
     // Update is called once per frame
     void Update()
     {
