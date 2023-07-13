@@ -14,6 +14,9 @@ public class LoadingUI : MonoBehaviour
     }
     public void SetSliderCompletion(float f)
     {
+        slider.interactable = true;
         slider.value = f;
+        slider.interactable = false;
+
     }
 }
