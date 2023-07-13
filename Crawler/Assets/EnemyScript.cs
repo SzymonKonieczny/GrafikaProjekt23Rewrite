@@ -40,12 +40,15 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] float TimeToForgetPlayer = 0;
     [SerializeField] float SetTimeToForgetPlayer = 3;
 
+    [SerializeField] float ChangeRoomDestinationTimeout = 30;
 
+    float LastRoomChangeTimeStamp;
     [SerializeField] float IdleTimeLeft =0;
     private void Start()
     {
         Animator = GetComponent<Animator>();
         playerRef = GameObject.FindGameObjectWithTag("Player");
+
         SetRandomRoom();
     StartCoroutine(FOVRoutine());
       //  navmesh.isStopped = true; //Optymizacja, po prostu zostaw to tak
@@ -55,7 +58,7 @@ public class EnemyScript : MonoBehaviour
         int randomID = UnityEngine.Random.Range(0, RoomManager.instance.Rooms.Count - 1);
         Debug.Log("Random Room choes by the enemy is: " + randomID);
         CurrentlyChosenRoom = RoomManager.instance.Rooms[randomID];
-
+        LastRoomChangeTimeStamp = Time.time;
     }
     bool SawPlayerBefore = false;
 
@@ -125,7 +128,8 @@ public class EnemyScript : MonoBehaviour
                     navmesh.isStopped = false;
                 }
                // Debug.Log("Distance to chosen room : " + Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position));
-                if(Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position) < CloseEnoughToRoom)
+                if(Vector3.Distance(transform.position, CurrentlyChosenRoom.transform.position) < CloseEnoughToRoom 
+                    || (Time.time - LastRoomChangeTimeStamp> ChangeRoomDestinationTimeout) )
                 {
                     State = EnemyState.Idle;
                     PreNoticeState = EnemyState.Idle;

@@ -112,21 +112,18 @@ public class RoomManager : MonoBehaviour
 
         Player.transform.SetPositionAndRotation(Rooms[Rooms.Count - 2].position + new Vector3(1,1,1) , Player.transform.rotation);
 
-        SpawnEnemies();
+        SpawnEnemies(index, Rooms.Count - 1, Rooms.Count / 2);
         LoadingScreen.gameObject.SetActive(false);
         GameStartTimestamp = Time.time;
 
     }
-    void SpawnEnemies()
+    void SpawnEnemies(int a, int b, int c)
     {
-        int RoomSpawn = 4;
-        Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
+        Instantiate(EnemyPrefab, Rooms[a].position, Rooms[a].rotation);
 
-       RoomSpawn = 2;
-        Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
+        Instantiate(EnemyPrefab, Rooms[b].position, Rooms[b].rotation);
 
-         RoomSpawn = 1;
-        Instantiate(EnemyPrefab, Rooms[RoomSpawn].position, Rooms[RoomSpawn].rotation);
+        Instantiate(EnemyPrefab, Rooms[c].position, Rooms[c].rotation);
     }
     public void OnKeyInsterted()
     {
@@ -139,6 +136,13 @@ public class RoomManager : MonoBehaviour
         VictoryScreen.setText("You escaped in : " + (int)( Time.time- GameStartTimestamp) + "seconds!");
         
     }
+
+    public GameOverUI GameOverScreen;
+    public void onCaught()
+    {
+        GameOverScreen.gameObject.SetActive(true);
+    }
+
     // Update is called once per frame
     void Update()
     {

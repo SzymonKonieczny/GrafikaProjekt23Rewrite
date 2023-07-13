@@ -187,7 +187,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSecondsRealtime(2f);
         JumpscareObject.SetActive(false);
         Dead = false;
-
+        RoomManager.instance.onCaught();
 
     }
     void InteractionRay()
